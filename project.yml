@@ -42,3 +42,4 @@ targets:
       base:
         BUNDLE_LOADER: "$(TEST_HOST)"
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/CleanLock.app/Contents/MacOS/CleanLock"
+        GENERATE_INFOPLIST_FILE: YES
