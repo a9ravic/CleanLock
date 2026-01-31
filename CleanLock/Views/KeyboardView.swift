@@ -15,6 +15,41 @@ struct KeyboardView: View {
     // 功能键高度比例（相对于普通键）
     private let functionKeyHeightRatio: CGFloat = 0.52
 
+    // 预计算的半高箭头键（避免每次渲染创建新 Key 对象）
+    private let halfHeightUpArrow: Key
+    private let halfHeightDownArrow: Key
+
+    init(layout: KeyboardLayout, cleanedKeys: Set<UInt16>, baseKeySize: CGFloat) {
+        self.layout = layout
+        self.cleanedKeys = cleanedKeys
+        self.baseKeySize = baseKeySize
+
+        // 从布局中获取箭头键并预计算半高版本
+        let arrowKeys = Array(layout.rows[5].suffix(4))
+        if arrowKeys.count == 4 {
+            let upArrow = arrowKeys[1]
+            let downArrow = arrowKeys[2]
+            self.halfHeightUpArrow = Key(
+                keyCode: upArrow.keyCode,
+                label: upArrow.label,
+                width: 1.0,
+                height: 0.47,
+                symbolName: upArrow.symbolName
+            )
+            self.halfHeightDownArrow = Key(
+                keyCode: downArrow.keyCode,
+                label: downArrow.label,
+                width: 1.0,
+                height: 0.47,
+                symbolName: downArrow.symbolName
+            )
+        } else {
+            // Fallback（不应该发生）
+            self.halfHeightUpArrow = Key(keyCode: 126, label: "↑", width: 1.0, height: 0.47, symbolName: "arrowtriangle.up.fill")
+            self.halfHeightDownArrow = Key(keyCode: 125, label: "↓", width: 1.0, height: 0.47, symbolName: "arrowtriangle.down.fill")
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // 功能键行（Row 0）- 矮键设计
@@ -37,12 +72,13 @@ struct KeyboardView: View {
     private var functionRow: some View {
         HStack(spacing: keySpacing) {
             ForEach(layout.rows[0]) { key in
-                KeyCapView(
+                EquatableKeyCapView(
                     key: key,
                     isCleaned: cleanedKeys.contains(key.keyCode),
                     baseSize: baseKeySize,
                     heightMultiplier: functionKeyHeightRatio
                 )
+                .equatable()
             }
         }
     }
@@ -73,11 +109,12 @@ struct KeyboardView: View {
     private func standardRow(rowIndex: Int) -> some View {
         HStack(spacing: keySpacing) {
             ForEach(layout.rows[rowIndex]) { key in
-                KeyCapView(
+                EquatableKeyCapView(
                     key: key,
                     isCleaned: cleanedKeys.contains(key.keyCode),
                     baseSize: baseKeySize
                 )
+                .equatable()
             }
         }
     }
@@ -92,11 +129,12 @@ struct KeyboardView: View {
         return HStack(spacing: keySpacing) {
             // 修饰键区域
             ForEach(modifierKeys) { key in
-                KeyCapView(
+                EquatableKeyCapView(
                     key: key,
                     isCleaned: cleanedKeys.contains(key.keyCode),
                     baseSize: baseKeySize
                 )
+                .equatable()
             }
 
             // 箭头键区域 - 倒 T 形布局
@@ -110,53 +148,43 @@ struct KeyboardView: View {
     private func arrowKeysView(keys: [Key]) -> some View {
         if keys.count == 4 {
             let leftArrow = keys[0]
-            let upArrow = keys[1]
-            let downArrow = keys[2]
             let rightArrow = keys[3]
 
             let halfKeySpacing = keySpacing * 0.5
 
             HStack(spacing: keySpacing) {
                 // 左箭头（全高）
-                KeyCapView(
+                EquatableKeyCapView(
                     key: leftArrow,
                     isCleaned: cleanedKeys.contains(leftArrow.keyCode),
                     baseSize: baseKeySize
                 )
+                .equatable()
 
-                // 上下箭头（垂直堆叠，各占半高）
+                // 上下箭头（垂直堆叠，各占半高）- 使用预计算的 Key 对象
                 VStack(spacing: halfKeySpacing) {
-                    KeyCapView(
-                        key: Key(
-                            keyCode: upArrow.keyCode,
-                            label: upArrow.label,
-                            width: 1.0,
-                            height: 0.47,
-                            symbolName: upArrow.symbolName
-                        ),
-                        isCleaned: cleanedKeys.contains(upArrow.keyCode),
+                    EquatableKeyCapView(
+                        key: halfHeightUpArrow,
+                        isCleaned: cleanedKeys.contains(halfHeightUpArrow.keyCode),
                         baseSize: baseKeySize
                     )
+                    .equatable()
 
-                    KeyCapView(
-                        key: Key(
-                            keyCode: downArrow.keyCode,
-                            label: downArrow.label,
-                            width: 1.0,
-                            height: 0.47,
-                            symbolName: downArrow.symbolName
-                        ),
-                        isCleaned: cleanedKeys.contains(downArrow.keyCode),
+                    EquatableKeyCapView(
+                        key: halfHeightDownArrow,
+                        isCleaned: cleanedKeys.contains(halfHeightDownArrow.keyCode),
                         baseSize: baseKeySize
                     )
+                    .equatable()
                 }
 
                 // 右箭头（全高）
-                KeyCapView(
+                EquatableKeyCapView(
                     key: rightArrow,
                     isCleaned: cleanedKeys.contains(rightArrow.keyCode),
                     baseSize: baseKeySize
                 )
+                .equatable()
             }
         } else {
             EmptyView()

@@ -1,6 +1,24 @@
 import SwiftUI
 import Combine
 
+// MARK: - Keyboard Section View
+
+/// 键盘区域独立视图
+/// 将键盘渲染隔离，避免 ESC 进度等状态变化触发键盘重绘
+struct KeyboardSectionView: View {
+    @ObservedObject var stateManager: CleaningStateManager
+    let baseKeySize: CGFloat
+
+    var body: some View {
+        KeyboardView(
+            layout: .macBook,
+            cleanedKeys: stateManager.cleanedKeys,
+            baseKeySize: baseKeySize
+        )
+        .shadow(color: Color.black.opacity(0.2), radius: 20, y: 8)
+    }
+}
+
 // MARK: - macOS Native Cleaning View
 
 struct CleaningView: View {
@@ -16,16 +34,9 @@ struct CleaningView: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private var cleanedKeys: Set<UInt16> {
-        if case .cleaning(let keys) = stateManager.state {
-            return keys
-        }
-        return []
-    }
-
+    // 直接使用 stateManager 的属性，避免重复计算
     private var progressPercentage: Double {
-        guard stateManager.totalKeys > 0 else { return 0 }
-        return Double(stateManager.cleanedCount) / Double(stateManager.totalKeys)
+        stateManager.progress
     }
 
     var body: some View {
@@ -222,12 +233,10 @@ struct CleaningView: View {
         let maxHeight = geometry.size.height * 0.42
         let baseKeySize = min(maxWidth / 16.5, maxHeight / 7.5, 50)
 
-        return KeyboardView(
-            layout: .macBook,
-            cleanedKeys: cleanedKeys,
+        return KeyboardSectionView(
+            stateManager: stateManager,
             baseKeySize: baseKeySize
         )
-        .shadow(color: Color.black.opacity(0.2), radius: 20, y: 8)
     }
 
     // MARK: - Exit Hint Section

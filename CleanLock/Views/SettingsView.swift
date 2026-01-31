@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 
 // MARK: - 设置视图
 
@@ -30,7 +29,7 @@ struct SettingsView: View {
                         .foregroundColor(DesignSystem.Colors.secondaryText)
 
                     HotKeyRecorderView(hotKey: $editingHotKey)
-                        .onReceive(Just(editingHotKey)) { newValue in
+                        .onChange(of: editingHotKey) { newValue in
                             hasChanges = newValue != hotKeyManager.currentHotKey
                         }
                 }

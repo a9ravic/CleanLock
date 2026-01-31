@@ -3,7 +3,9 @@ import Foundation
 // MARK: - Key Model
 
 struct Key: Identifiable, Equatable, Hashable {
-    let id: UUID = UUID()
+    // 使用 keyCode 作为稳定的身份标识，而不是 UUID
+    // 这允许 SwiftUI 正确识别键的身份，避免不必要的视图重建
+    var id: UInt16 { keyCode }
     let keyCode: UInt16
     let label: String
     let secondaryLabel: String?
@@ -36,17 +38,26 @@ struct Key: Identifiable, Equatable, Hashable {
         self.symbolName = symbolName
     }
 
+    // 用于追踪已分配的占位符 keyCode
+    private static var nextPlaceholderKeyCode: UInt16 = 65531  // 从 65531 开始递减
+
     /// 创建占位符键（用于无法拦截的功能键位置）
+    /// 每个占位符使用唯一的 keyCode（65531, 65530, 65529, 65528）
     static func placeholder(width: CGFloat = 1.0) -> Key {
-        Key(keyCode: UInt16.max, label: "", width: width, isPlaceholder: true)
+        let keyCode = nextPlaceholderKeyCode
+        nextPlaceholderKeyCode -= 1
+        return Key(keyCode: keyCode, label: "", width: width, isPlaceholder: true)
     }
 
     static func == (lhs: Key, rhs: Key) -> Bool {
-        lhs.id == rhs.id
+        lhs.keyCode == rhs.keyCode &&
+        lhs.label == rhs.label &&
+        lhs.width == rhs.width &&
+        lhs.height == rhs.height
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(keyCode)
     }
 }
 

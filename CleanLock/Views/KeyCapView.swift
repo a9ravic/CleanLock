@@ -301,6 +301,35 @@ struct KeyCapView: View {
     }
 }
 
+// MARK: - Equatable KeyCap View
+
+/// 可等值比较的键帽视图包装器
+/// 使用 Equatable 协议让 SwiftUI 在输入不变时跳过视图重建
+struct EquatableKeyCapView: View, Equatable {
+    let key: Key
+    let isCleaned: Bool
+    let baseSize: CGFloat
+    let heightMultiplier: CGFloat
+
+    init(key: Key, isCleaned: Bool, baseSize: CGFloat, heightMultiplier: CGFloat = 1.0) {
+        self.key = key
+        self.isCleaned = isCleaned
+        self.baseSize = baseSize
+        self.heightMultiplier = heightMultiplier
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.key.keyCode == rhs.key.keyCode &&
+        lhs.isCleaned == rhs.isCleaned &&
+        lhs.baseSize == rhs.baseSize &&
+        lhs.heightMultiplier == rhs.heightMultiplier
+    }
+
+    var body: some View {
+        KeyCapView(key: key, isCleaned: isCleaned, baseSize: baseSize, heightMultiplier: heightMultiplier)
+    }
+}
+
 // MARK: - Preview
 
 #Preview("Single Keys") {
