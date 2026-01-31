@@ -21,8 +21,9 @@ enum CleaningState: Equatable {
 @MainActor
 final class CleaningStateManager: ObservableObject {
     @Published private(set) var state: CleaningState = .idle
+    @Published var isEscPressed: Bool = false
 
-    private let totalKeys: Int
+    let totalKeys: Int
     private let allKeyCodes: Set<UInt16>
 
     init(layout: KeyboardLayout = .macBook) {

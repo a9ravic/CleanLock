@@ -1,12 +1,15 @@
 import Foundation
 import CoreGraphics
 import Combine
+import AppKit
 
 final class KeyInterceptor {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
+    private var pressedModifiers: Set<UInt16> = []
 
     var onKeyPress: ((UInt16) -> Void)?
+    var onKeyUp: ((UInt16) -> Void)?
 
     var isRunning: Bool {
         eventTap != nil
@@ -15,7 +18,11 @@ final class KeyInterceptor {
     func start() -> Bool {
         guard eventTap == nil else { return true }
 
-        let eventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
+        // Include systemDefined (14) to intercept special function keys (brightness, volume, etc.)
+        let eventMask = (1 << CGEventType.keyDown.rawValue)
+            | (1 << CGEventType.keyUp.rawValue)
+            | (1 << CGEventType.flagsChanged.rawValue)
+            | (1 << 14) // NX_SYSDEFINED - special function keys
 
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -56,15 +63,115 @@ final class KeyInterceptor {
     }
 
     private func handleEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
-        guard type == .keyDown else {
-            return nil // Block key up events too
+        // Handle special function keys (NX_SYSDEFINED, rawValue 14)
+        // These are brightness, volume, keyboard backlight, etc.
+        if type.rawValue == 14 {
+            handleSystemDefinedEvent(event: event)
+            // Block special function key events
+            return nil
         }
 
         let keyCode = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
-        onKeyPress?(keyCode)
+
+        switch type {
+        case .keyDown:
+            onKeyPress?(keyCode)
+
+        case .keyUp:
+            onKeyUp?(keyCode)
+
+        case .flagsChanged:
+            // Handle modifier keys (Shift, Control, Option, Command, Fn, Caps Lock)
+            handleFlagsChanged(event: event, keyCode: keyCode)
+
+        default:
+            break
+        }
 
         // Return nil to block the event from propagating
         return nil
+    }
+
+    private func handleSystemDefinedEvent(event: CGEvent) {
+        // NX_SYSDEFINED events use NSEvent to extract data
+        guard let nsEvent = NSEvent(cgEvent: event) else { return }
+
+        // Check if it's an auxiliary control button event (subtype 8)
+        guard nsEvent.subtype.rawValue == 8 else { return }
+
+        let data1 = nsEvent.data1
+
+        // Extract key flavor (bits 16-31) and key state (bits 8-15)
+        let keyFlavor = (data1 & 0xFFFF0000) >> 16
+        let keyState = (data1 & 0x0000FF00) >> 8  // 0x0A = key down, 0x0B = key up
+        let isKeyDown = keyState == 0x0A
+
+        // Map special function key flavor to F1-F2, F7-F12 keyCodes
+        // F3-F6 无法拦截，已从键盘布局中移除
+        // Based on NX_KEYTYPE definitions from IOKit/hidsystem/ev_keymap.h
+        let flavorToKeyCode: [Int: UInt16] = [
+            // F1-F2: 亮度控制
+            3: 122,    // NX_KEYTYPE_BRIGHTNESS_DOWN -> F1
+            2: 120,    // NX_KEYTYPE_BRIGHTNESS_UP -> F2
+
+            // F7-F9: 媒体控制
+            18: 98,    // NX_KEYTYPE_PREVIOUS -> F7
+            20: 98,    // NX_KEYTYPE_REWIND -> F7
+            16: 100,   // NX_KEYTYPE_PLAY -> F8
+            17: 101,   // NX_KEYTYPE_NEXT -> F9
+            19: 101,   // NX_KEYTYPE_FAST -> F9
+
+            // F10-F12: 音量控制
+            7: 109,    // NX_KEYTYPE_MUTE -> F10
+            1: 103,    // NX_KEYTYPE_SOUND_DOWN -> F11
+            0: 111,    // NX_KEYTYPE_SOUND_UP -> F12
+        ]
+
+        if let keyCode = flavorToKeyCode[keyFlavor] {
+            if isKeyDown {
+                onKeyPress?(keyCode)
+            } else {
+                onKeyUp?(keyCode)
+            }
+        }
+    }
+
+    private func handleFlagsChanged(event: CGEvent, keyCode: UInt16) {
+        let flags = event.flags
+
+        // Map keyCode to corresponding flag
+        let keyFlagMap: [(UInt16, CGEventFlags)] = [
+            (56, .maskShift),      // Left Shift
+            (60, .maskShift),      // Right Shift
+            (59, .maskControl),    // Left Control
+            (62, .maskControl),    // Right Control
+            (58, .maskAlternate),  // Left Option
+            (61, .maskAlternate),  // Right Option
+            (55, .maskCommand),    // Left Command
+            (54, .maskCommand),    // Right Command
+            (57, .maskAlphaShift), // Caps Lock
+            (63, .maskSecondaryFn) // Fn
+        ]
+
+        // Check if this modifier is now pressed or released
+        for (code, flag) in keyFlagMap {
+            if code == keyCode {
+                if flags.contains(flag) || (code == 57 && flags.contains(.maskAlphaShift)) {
+                    // Modifier pressed
+                    if !pressedModifiers.contains(code) {
+                        pressedModifiers.insert(code)
+                        onKeyPress?(code)
+                    }
+                } else {
+                    // Modifier released
+                    if pressedModifiers.contains(code) {
+                        pressedModifiers.remove(code)
+                        onKeyUp?(code)
+                    }
+                }
+                break
+            }
+        }
     }
 
     deinit {

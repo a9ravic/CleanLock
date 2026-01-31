@@ -20,8 +20,8 @@ struct CleaningView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background
-                Color.black.opacity(0.8)
+                // Background - adapts to light/dark mode
+                Color(nsColor: .windowBackgroundColor)
                     .ignoresSafeArea()
 
                 // Content based on state
@@ -36,6 +36,13 @@ struct CleaningView: View {
 
                 case .cleaning:
                     cleaningContent(geometry: geometry)
+                        .onChange(of: stateManager.isEscPressed) { isPressed in
+                            if isPressed {
+                                handleEscPress()
+                            } else {
+                                handleEscRelease()
+                            }
+                        }
 
                 case .completed:
                     CompletionView(onComplete: onExit)
@@ -74,7 +81,7 @@ struct CleaningView: View {
                     .font(.system(size: 18))
                     .foregroundColor(.secondary)
 
-                Text("进度: \(stateManager.cleanedCount)/78 键")
+                Text("进度: \(stateManager.cleanedCount)/\(stateManager.totalKeys) 键")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.accentColor)
             }

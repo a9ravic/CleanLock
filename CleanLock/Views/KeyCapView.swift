@@ -16,21 +16,29 @@ struct KeyCapView: View {
     }
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(isCleaned ? Color.accentColor : Color(nsColor: .controlBackgroundColor))
-                .shadow(color: .black.opacity(0.2), radius: 1, y: 1)
+        Group {
+            if key.isPlaceholder {
+                // 占位符：透明空白，保持布局
+                Color.clear
+                    .frame(width: keyWidth, height: keyHeight)
+            } else {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(isCleaned ? Color.accentColor : Color(nsColor: .controlBackgroundColor))
+                        .shadow(color: .black.opacity(0.2), radius: 1, y: 1)
 
-            Text(key.label)
-                .font(.system(size: baseSize * 0.35, weight: .medium, design: .rounded))
-                .foregroundColor(isCleaned ? .white : .primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
+                    Text(key.label)
+                        .font(.system(size: baseSize * 0.35, weight: .medium, design: .rounded))
+                        .foregroundColor(isCleaned ? .white : .primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
+                .frame(width: keyWidth, height: keyHeight)
+                .scaleEffect(isPressed ? 0.95 : 1.0)
+                .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
+                .animation(.easeInOut(duration: 0.2), value: isCleaned)
+            }
         }
-        .frame(width: keyWidth, height: keyHeight)
-        .scaleEffect(isPressed ? 0.95 : 1.0)
-        .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
-        .animation(.easeInOut(duration: 0.2), value: isCleaned)
     }
 
     func triggerPress() {

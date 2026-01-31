@@ -22,7 +22,7 @@ struct KeyboardView: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.ultraThinMaterial)
+                .fill(Color(nsColor: .controlBackgroundColor))
         )
     }
 }
@@ -34,5 +34,5 @@ struct KeyboardView: View {
         baseKeySize: 40
     )
     .padding()
-    .background(Color.black.opacity(0.5))
+    .background(Color(nsColor: .windowBackgroundColor))
 }
