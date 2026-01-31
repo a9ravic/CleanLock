@@ -1,26 +1,25 @@
 import Foundation
 import Combine
 
+// MARK: - Cleaning State (简化版，不包含关联值)
+
 enum CleaningState: Equatable {
     case idle
-    case cleaning(Set<UInt16>)
+    case cleaning
     case completed
     case exiting
-
-    static func == (lhs: CleaningState, rhs: CleaningState) -> Bool {
-        switch (lhs, rhs) {
-        case (.idle, .idle): return true
-        case (.completed, .completed): return true
-        case (.exiting, .exiting): return true
-        case (.cleaning(let a), .cleaning(let b)): return a == b
-        default: return false
-        }
-    }
 }
+
+// MARK: - Cleaning State Manager
 
 @MainActor
 final class CleaningStateManager: ObservableObject {
+    /// 清洁阶段状态（不包含已清洁键集合，避免频繁触发全局重绘）
     @Published private(set) var state: CleaningState = .idle
+
+    /// 已清洁的键码集合（独立发布，仅影响依赖它的视图）
+    @Published private(set) var cleanedKeys: Set<UInt16> = []
+
     @Published var isEscPressed: Bool = false
 
     /// 每次进入 completed 状态时递增，用于强制 SwiftUI 重建 CompletionView
@@ -35,50 +34,48 @@ final class CleaningStateManager: ObservableObject {
     }
 
     var cleanedCount: Int {
-        if case .cleaning(let keys) = state {
-            return keys.count
-        }
-        return 0
+        cleanedKeys.count
     }
 
     var progress: Double {
-        Double(cleanedCount) / Double(totalKeys)
+        guard totalKeys > 0 else { return 0 }
+        return Double(cleanedKeys.count) / Double(totalKeys)
+    }
+
+    var isCleaning: Bool {
+        state == .cleaning
     }
 
     func startCleaning() {
-        print("🟣 [StateManager] startCleaning() called")
-        state = .cleaning(Set())
+        cleanedKeys = []
+        state = .cleaning
     }
 
     func markKeyCleaned(keyCode: UInt16) {
-        guard case .cleaning(var keys) = state else { return }
+        guard state == .cleaning else { return }
         guard allKeyCodes.contains(keyCode) else { return }
 
-        keys.insert(keyCode)
+        // 只有新键才更新，避免重复触发
+        guard !cleanedKeys.contains(keyCode) else { return }
 
-        if keys.count == totalKeys {
-            completionId += 1  // 递增 ID，强制 SwiftUI 重建 CompletionView
-            print("🟣 [StateManager] All keys cleaned! Setting state to .completed, completionId=\(completionId)")
+        cleanedKeys.insert(keyCode)
+
+        if cleanedKeys.count == totalKeys {
+            completionId += 1
             state = .completed
-        } else {
-            state = .cleaning(keys)
         }
     }
 
     func isKeyCleaned(keyCode: UInt16) -> Bool {
-        if case .cleaning(let keys) = state {
-            return keys.contains(keyCode)
-        }
-        return false
+        cleanedKeys.contains(keyCode)
     }
 
     func setExiting() {
-        print("🟣 [StateManager] setExiting() called, state changing from \(state) to .exiting")
         state = .exiting
     }
 
     func reset() {
-        print("🟣 [StateManager] reset() called, state changing from \(state) to .idle")
+        cleanedKeys = []
         state = .idle
     }
 }

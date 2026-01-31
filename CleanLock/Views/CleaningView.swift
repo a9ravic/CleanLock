@@ -66,33 +66,24 @@ struct CleaningView: View {
                             }
                         }
                         .onAppear {
-                            print("🟡 [CleaningView] .cleaning case appeared")
                             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                                 showContent = true
                             }
                         }
                         .onDisappear {
-                            print("🟡 [CleaningView] .cleaning case disappeared")
                             escTimer?.invalidate()
                             escTimer = nil
                         }
 
                 case .completed:
                     CompletionView(onComplete: {
-                        print("🟡 [CleaningView] CompletionView onComplete triggered, calling onExit")
                         onExit()
                     })
-                        .id(stateManager.completionId)  // 强制 SwiftUI 每次创建新实例
+                        .id(stateManager.completionId)
                         .transition(.scale(scale: 0.9).combined(with: .opacity))
-                        .onAppear {
-                            print("🟡 [CleaningView] .completed case appeared, completionId=\(stateManager.completionId)")
-                        }
 
                 case .exiting:
                     EmptyView()
-                        .onAppear {
-                            print("🟡 [CleaningView] .exiting case appeared")
-                        }
                 }
             }
         }

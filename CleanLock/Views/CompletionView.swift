@@ -5,7 +5,7 @@ import SwiftUI
 struct CompletionView: View {
     @State private var showContent = false
     @State private var ringProgress: CGFloat = 0
-    @State private var countdownTimer: Timer?
+    @State private var completionTask: Task<Void, Never>?
 
     private let duration: Double = 1.7
     let onComplete: () -> Void
@@ -72,14 +72,12 @@ struct CompletionView: View {
         .padding(DesignSystem.Spacing.xl)
         .background(cardBackground)
         .onAppear {
-            print("🟢 [CompletionView] onAppear called!")
             resetState()
             startAnimations()
         }
         .onDisappear {
-            print("🟢 [CompletionView] onDisappear called!")
-            countdownTimer?.invalidate()
-            countdownTimer = nil
+            completionTask?.cancel()
+            completionTask = nil
         }
     }
 
@@ -109,12 +107,10 @@ struct CompletionView: View {
     // MARK: - State Management
 
     private func resetState() {
-        print("🟢 [CompletionView] resetState() called")
         showContent = false
         ringProgress = 0
-        countdownTimer?.invalidate()
-        countdownTimer = nil
-        print("🟢 [CompletionView] State reset complete")
+        completionTask?.cancel()
+        completionTask = nil
     }
 
     // MARK: - Animations
@@ -130,10 +126,16 @@ struct CompletionView: View {
             ringProgress = 1.0
         }
 
-        // 完成回调
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration + 0.3) {
-            print("🟢 [CompletionView] Ring complete, calling onComplete()")
-            onComplete()
+        // 完成回调 - 使用可取消的 Task 替代 asyncAfter
+        let totalDelay = duration + 0.3
+        completionTask = Task { @MainActor in
+            do {
+                try await Task.sleep(for: .seconds(totalDelay))
+                guard !Task.isCancelled else { return }
+                onComplete()
+            } catch {
+                // Task 被取消，不执行回调
+            }
         }
     }
 }
