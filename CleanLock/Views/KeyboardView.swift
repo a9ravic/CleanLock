@@ -7,60 +7,86 @@ struct KeyboardView: View {
     let cleanedKeys: Set<UInt16>
     let baseKeySize: CGFloat
 
-    // 键间距（键大小的百分比）
+    // 键间距 - 使用较小的间距使行对齐更精确
     private var keySpacing: CGFloat {
-        baseKeySize * 0.06
+        baseKeySize * 0.1
     }
 
-    // 功能键高度比例（相对于普通键）
-    private let functionKeyHeightRatio: CGFloat = 0.52
+    // 功能键高度比例 - 与普通键相同高度（只有方向键是半高）
+    private let functionKeyHeightRatio: CGFloat = 1.0
+
+    // 计算行的总宽度（用于确保所有行对齐成矩形）
+    private var rowTotalWidth: CGFloat {
+        // 所有行键宽度总和 = 14.0，以14键行（13间距）为基准
+        // 总宽度 = 14.0 * baseKeySize + 13 * keySpacing
+        14.0 * baseKeySize + 13 * keySpacing
+    }
 
     // 预计算的半高箭头键（避免每次渲染创建新 Key 对象）
+    private let halfHeightLeftArrow: Key
     private let halfHeightUpArrow: Key
     private let halfHeightDownArrow: Key
+    private let halfHeightRightArrow: Key
 
     init(layout: KeyboardLayout, cleanedKeys: Set<UInt16>, baseKeySize: CGFloat) {
         self.layout = layout
         self.cleanedKeys = cleanedKeys
         self.baseKeySize = baseKeySize
 
-        // 从布局中获取箭头键并预计算半高版本
+        // 从布局中获取箭头键并预计算半高版本（高度 0.5，即标准键的一半）
         let arrowKeys = Array(layout.rows[5].suffix(4))
         if arrowKeys.count == 4 {
+            let leftArrow = arrowKeys[0]
             let upArrow = arrowKeys[1]
             let downArrow = arrowKeys[2]
+            let rightArrow = arrowKeys[3]
+            self.halfHeightLeftArrow = Key(
+                keyCode: leftArrow.keyCode,
+                label: leftArrow.label,
+                width: 1.0,
+                height: 0.5,
+                symbolName: leftArrow.symbolName
+            )
             self.halfHeightUpArrow = Key(
                 keyCode: upArrow.keyCode,
                 label: upArrow.label,
                 width: 1.0,
-                height: 0.47,
+                height: 0.5,
                 symbolName: upArrow.symbolName
             )
             self.halfHeightDownArrow = Key(
                 keyCode: downArrow.keyCode,
                 label: downArrow.label,
                 width: 1.0,
-                height: 0.47,
+                height: 0.5,
                 symbolName: downArrow.symbolName
+            )
+            self.halfHeightRightArrow = Key(
+                keyCode: rightArrow.keyCode,
+                label: rightArrow.label,
+                width: 1.0,
+                height: 0.5,
+                symbolName: rightArrow.symbolName
             )
         } else {
             // Fallback（不应该发生）
-            self.halfHeightUpArrow = Key(keyCode: 126, label: "↑", width: 1.0, height: 0.47, symbolName: "arrowtriangle.up.fill")
-            self.halfHeightDownArrow = Key(keyCode: 125, label: "↓", width: 1.0, height: 0.47, symbolName: "arrowtriangle.down.fill")
+            self.halfHeightLeftArrow = Key(keyCode: 123, label: "←", width: 1.0, height: 0.5, symbolName: "arrowtriangle.left.fill")
+            self.halfHeightUpArrow = Key(keyCode: 126, label: "↑", width: 1.0, height: 0.5, symbolName: "arrowtriangle.up.fill")
+            self.halfHeightDownArrow = Key(keyCode: 125, label: "↓", width: 1.0, height: 0.5, symbolName: "arrowtriangle.down.fill")
+            self.halfHeightRightArrow = Key(keyCode: 124, label: "→", width: 1.0, height: 0.5, symbolName: "arrowtriangle.right.fill")
         }
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 功能键行（Row 0）- 矮键设计
+        VStack(spacing: keySpacing) {
+            // 功能键行（Row 0）- 与普通键相同高度
             functionRow
-                .padding(.bottom, keySpacing * 1.5)
 
             // 主键盘区域（Row 1-5）
             mainKeyboardArea
         }
-        .padding(.horizontal, baseKeySize * 0.35)
-        .padding(.vertical, baseKeySize * 0.3)
+        .padding(.horizontal, baseKeySize * 0.25)
+        .padding(.vertical, baseKeySize * 0.2)
         .background(keyboardBackground)
         // 使用 drawingGroup 将整个键盘视图合成为单一图层
         // 大幅减少 82 个键帽的独立渲染开销
@@ -81,6 +107,7 @@ struct KeyboardView: View {
                 .equatable()
             }
         }
+        .frame(width: rowTotalWidth)
     }
 
     // MARK: - Main Keyboard Area
@@ -117,6 +144,7 @@ struct KeyboardView: View {
                 .equatable()
             }
         }
+        .frame(width: rowTotalWidth)
     }
 
     // MARK: - Bottom Row with Inverted-T Arrow Keys
@@ -140,28 +168,27 @@ struct KeyboardView: View {
             // 箭头键区域 - 倒 T 形布局
             arrowKeysView(keys: arrowKeys)
         }
+        .frame(width: rowTotalWidth)
     }
 
     // MARK: - Arrow Keys (Inverted-T Layout)
+    // 所有箭头键都是半高，左右在底部，上下垂直堆叠在中间
 
     @ViewBuilder
     private func arrowKeysView(keys: [Key]) -> some View {
         if keys.count == 4 {
-            let leftArrow = keys[0]
-            let rightArrow = keys[3]
-
             let halfKeySpacing = keySpacing * 0.5
 
-            HStack(spacing: keySpacing) {
-                // 左箭头（全高）
+            HStack(alignment: .bottom, spacing: keySpacing) {
+                // 左箭头（半高，底部对齐）
                 EquatableKeyCapView(
-                    key: leftArrow,
-                    isCleaned: cleanedKeys.contains(leftArrow.keyCode),
+                    key: halfHeightLeftArrow,
+                    isCleaned: cleanedKeys.contains(halfHeightLeftArrow.keyCode),
                     baseSize: baseKeySize
                 )
                 .equatable()
 
-                // 上下箭头（垂直堆叠，各占半高）- 使用预计算的 Key 对象
+                // 上下箭头（垂直堆叠，各占半高）
                 VStack(spacing: halfKeySpacing) {
                     EquatableKeyCapView(
                         key: halfHeightUpArrow,
@@ -178,10 +205,10 @@ struct KeyboardView: View {
                     .equatable()
                 }
 
-                // 右箭头（全高）
+                // 右箭头（半高，底部对齐）
                 EquatableKeyCapView(
-                    key: rightArrow,
-                    isCleaned: cleanedKeys.contains(rightArrow.keyCode),
+                    key: halfHeightRightArrow,
+                    isCleaned: cleanedKeys.contains(halfHeightRightArrow.keyCode),
                     baseSize: baseKeySize
                 )
                 .equatable()
