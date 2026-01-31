@@ -34,4 +34,8 @@ final class PermissionManager: ObservableObject {
         timer?.invalidate()
         timer = nil
     }
+
+    deinit {
+        timer?.invalidate()
+    }
 }

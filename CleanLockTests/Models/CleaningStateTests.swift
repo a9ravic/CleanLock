@@ -42,7 +42,9 @@ final class CleaningStateTests: XCTestCase {
         manager.markKeyCleaned(keyCode: 18)
 
         XCTAssertEqual(manager.cleanedCount, 2)
-        XCTAssertEqual(manager.progress, 2.0 / 78.0, accuracy: 0.001)
+        // Use actual total keys count from the layout (excludes placeholder keys)
+        let totalKeys = Double(KeyboardLayout.macBook.allKeys.count)
+        XCTAssertEqual(manager.progress, 2.0 / totalKeys, accuracy: 0.001)
     }
 
     func testAllKeysCleanedTransitionsToCompleted() {

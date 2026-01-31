@@ -3,11 +3,28 @@ import AppKit
 import Carbon
 import Combine
 
+// MARK: - Global HotKey Handler
+
+/// 全局热键处理器 - 使用 Carbon API 无需辅助功能权限
+private var globalHotKeyHandler: (() -> Void)?
+
+/// Carbon 事件处理回调
+private func carbonHotKeyHandler(
+    nextHandler: EventHandlerCallRef?,
+    theEvent: EventRef?,
+    userData: UnsafeMutableRawPointer?
+) -> OSStatus {
+    globalHotKeyHandler?()
+    return noErr
+}
+
 @MainActor
 final class HotKeyManager: ObservableObject {
     @Published var currentHotKey: HotKey = .default
 
-    private var eventMonitor: Any?
+    private var hotKeyRef: EventHotKeyRef?
+    private var eventHandlerRef: EventHandlerRef?
+
     var onHotKeyPressed: (() -> Void)?
 
     struct HotKey: Equatable, Codable {
@@ -27,6 +44,16 @@ final class HotKeyManager: ObservableObject {
             if modifiers.contains(.control) { parts.append("⌃") }
             parts.append(keyCodeToString(keyCode))
             return parts.joined()
+        }
+
+        /// 转换为 Carbon 修饰键格式
+        var carbonModifiers: UInt32 {
+            var carbonMods: UInt32 = 0
+            if modifiers.contains(.command) { carbonMods |= UInt32(cmdKey) }
+            if modifiers.contains(.shift) { carbonMods |= UInt32(shiftKey) }
+            if modifiers.contains(.option) { carbonMods |= UInt32(optionKey) }
+            if modifiers.contains(.control) { carbonMods |= UInt32(controlKey) }
+            return carbonMods
         }
 
         private func keyCodeToString(_ keyCode: UInt16) -> String {
@@ -65,33 +92,84 @@ final class HotKeyManager: ObservableObject {
     }
 
     func start() {
-        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            Task { @MainActor in
-                self?.handleGlobalKeyEvent(event)
-            }
-        }
+        registerHotKey()
     }
 
     func stop() {
-        if let monitor = eventMonitor {
-            NSEvent.removeMonitor(monitor)
-            eventMonitor = nil
+        unregisterHotKey()
+    }
+
+    /// 重新注册热键（当热键设置改变时调用）
+    func reregisterHotKey() {
+        unregisterHotKey()
+        registerHotKey()
+    }
+
+    private func registerHotKey() {
+        // 设置全局回调
+        globalHotKeyHandler = { [weak self] in
+            Task { @MainActor in
+                self?.onHotKeyPressed?()
+            }
+        }
+
+        // 注册事件处理器
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard),
+            eventKind: UInt32(kEventHotKeyPressed)
+        )
+
+        let status = InstallEventHandler(
+            GetApplicationEventTarget(),
+            carbonHotKeyHandler,
+            1,
+            &eventType,
+            nil,
+            &eventHandlerRef
+        )
+
+        guard status == noErr else {
+            print("Failed to install event handler: \(status)")
+            return
+        }
+
+        // 注册热键
+        let hotKeyID = EventHotKeyID(signature: OSType(0x434C4B00), id: 1) // "CLK\0"
+
+        let registerStatus = RegisterEventHotKey(
+            UInt32(currentHotKey.keyCode),
+            currentHotKey.carbonModifiers,
+            hotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &hotKeyRef
+        )
+
+        if registerStatus != noErr {
+            print("Failed to register hotkey: \(registerStatus)")
         }
     }
 
-    private func handleGlobalKeyEvent(_ event: NSEvent) {
-        let pressedModifiers = event.modifierFlags.intersection([.command, .shift, .option, .control])
-        let requiredModifiers = currentHotKey.modifiers.intersection([.command, .shift, .option, .control])
-
-        if event.keyCode == currentHotKey.keyCode && pressedModifiers == requiredModifiers {
-            onHotKeyPressed?()
+    private func unregisterHotKey() {
+        if let hotKeyRef = hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
         }
+
+        if let eventHandlerRef = eventHandlerRef {
+            RemoveEventHandler(eventHandlerRef)
+            self.eventHandlerRef = nil
+        }
+
+        globalHotKeyHandler = nil
     }
 
     func saveHotKey() {
         if let data = try? JSONEncoder().encode(currentHotKey) {
             UserDefaults.standard.set(data, forKey: "CleanLockHotKey")
         }
+        // 保存后重新注册热键
+        reregisterHotKey()
     }
 
     func loadHotKey() {
@@ -102,8 +180,7 @@ final class HotKeyManager: ObservableObject {
     }
 
     deinit {
-        if let monitor = eventMonitor {
-            NSEvent.removeMonitor(monitor)
-        }
+        // 注意：deinit 不在 MainActor 上下文中
+        // 热键清理会在 stop() 或对象释放时自动处理
     }
 }

@@ -3,6 +3,19 @@ import CoreGraphics
 import Combine
 import AppKit
 
+// MARK: - Event Constants
+
+private enum EventConstants {
+    /// NX_SYSDEFINED event type for special function keys (brightness, volume, etc.)
+    static let systemDefinedEventType: UInt32 = 14
+    /// Subtype for auxiliary control button events
+    static let auxiliaryControlSubtype: Int16 = 8
+    /// Key down state in NX_SYSDEFINED events
+    static let keyDownState = 0x0A
+    /// Key up state in NX_SYSDEFINED events
+    static let keyUpState = 0x0B
+}
+
 final class KeyInterceptor {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -18,11 +31,11 @@ final class KeyInterceptor {
     func start() -> Bool {
         guard eventTap == nil else { return true }
 
-        // Include systemDefined (14) to intercept special function keys (brightness, volume, etc.)
+        // Include systemDefined to intercept special function keys (brightness, volume, etc.)
         let eventMask = (1 << CGEventType.keyDown.rawValue)
             | (1 << CGEventType.keyUp.rawValue)
             | (1 << CGEventType.flagsChanged.rawValue)
-            | (1 << 14) // NX_SYSDEFINED - special function keys
+            | (1 << EventConstants.systemDefinedEventType)
 
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -43,7 +56,8 @@ final class KeyInterceptor {
         runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
 
         if let source = runLoopSource {
-            CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
+            // Use main RunLoop to ensure thread safety
+            CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
         }
 
@@ -54,18 +68,20 @@ final class KeyInterceptor {
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: false)
             if let source = runLoopSource {
-                CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .commonModes)
+                // Use main RunLoop to match start()
+                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
             }
             CFMachPortInvalidate(tap)
         }
         eventTap = nil
         runLoopSource = nil
+        pressedModifiers.removeAll()
     }
 
     private func handleEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
-        // Handle special function keys (NX_SYSDEFINED, rawValue 14)
+        // Handle special function keys (NX_SYSDEFINED)
         // These are brightness, volume, keyboard backlight, etc.
-        if type.rawValue == 14 {
+        if type.rawValue == EventConstants.systemDefinedEventType {
             handleSystemDefinedEvent(event: event)
             // Block special function key events
             return nil
@@ -96,15 +112,15 @@ final class KeyInterceptor {
         // NX_SYSDEFINED events use NSEvent to extract data
         guard let nsEvent = NSEvent(cgEvent: event) else { return }
 
-        // Check if it's an auxiliary control button event (subtype 8)
-        guard nsEvent.subtype.rawValue == 8 else { return }
+        // Check if it's an auxiliary control button event
+        guard nsEvent.subtype.rawValue == EventConstants.auxiliaryControlSubtype else { return }
 
         let data1 = nsEvent.data1
 
         // Extract key flavor (bits 16-31) and key state (bits 8-15)
         let keyFlavor = (data1 & 0xFFFF0000) >> 16
-        let keyState = (data1 & 0x0000FF00) >> 8  // 0x0A = key down, 0x0B = key up
-        let isKeyDown = keyState == 0x0A
+        let keyState = (data1 & 0x0000FF00) >> 8
+        let isKeyDown = keyState == EventConstants.keyDownState
 
         // Map special function key flavor to F1-F2, F7-F12 keyCodes
         // F3-F6 无法拦截，已从键盘布局中移除

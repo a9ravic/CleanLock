@@ -2,6 +2,13 @@ import AppKit
 import SwiftUI
 import Combine
 
+// MARK: - 可成为 Key Window 的无边框窗口
+
+final class KeyableWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
@@ -37,6 +44,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showMainWindow()
         }
         return true
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // 清理热键注册
+        hotKeyManager.stop()
+        // 清理键盘拦截
+        keyInterceptor.stop()
     }
 
     private func setupStatusItem() {
@@ -183,7 +197,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         )
 
-        let window = NSWindow(
+        // 使用 KeyableWindow 替代 NSWindow，确保 borderless 窗口可以成为 key window
+        let window = KeyableWindow(
             contentRect: NSScreen.main?.frame ?? .zero,
             styleMask: [.borderless, .fullSizeContentView],
             backing: .buffered,
@@ -195,6 +210,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.hasShadow = false
         window.contentView = NSHostingView(rootView: contentView)
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        window.isReleasedWhenClosed = false
 
         cleaningWindow = window
         window.makeKeyAndOrderFront(nil)
@@ -228,14 +244,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         keyInterceptor.stop()
         stateManager.reset()
 
-        let window = cleaningWindow
+        guard let window = cleaningWindow else { return }
+
+        // 先清除引用，防止重复调用
+        cleaningWindow = nil
+
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0.3
-            window?.animator().alphaValue = 0
-        } completionHandler: { [weak self] in
-            Task { @MainActor in
-                self?.cleaningWindow?.close()
-                self?.cleaningWindow = nil
+            window.animator().alphaValue = 0
+        } completionHandler: {
+            // 确保在主线程上关闭窗口
+            DispatchQueue.main.async {
+                window.orderOut(nil)
             }
         }
     }
