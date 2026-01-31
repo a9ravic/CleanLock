@@ -14,6 +14,7 @@ struct Key: Identifiable, Equatable, Hashable {
     let isModifier: Bool
     let isPlaceholder: Bool
     let isFunctionKey: Bool
+    let isSystemReserved: Bool  // 系统保留键（F3-F6 等），清洁时自动跳过
     let symbolName: String?
 
     init(
@@ -25,6 +26,7 @@ struct Key: Identifiable, Equatable, Hashable {
         isModifier: Bool = false,
         isPlaceholder: Bool = false,
         isFunctionKey: Bool = false,
+        isSystemReserved: Bool = false,
         symbolName: String? = nil
     ) {
         self.keyCode = keyCode
@@ -35,6 +37,7 @@ struct Key: Identifiable, Equatable, Hashable {
         self.isModifier = isModifier
         self.isPlaceholder = isPlaceholder
         self.isFunctionKey = isFunctionKey
+        self.isSystemReserved = isSystemReserved
         self.symbolName = symbolName
     }
 
@@ -79,6 +82,16 @@ struct KeyboardLayout {
         rows.flatMap { $0 }.filter { !$0.isPlaceholder }
     }
 
+    /// 系统保留键的 keyCode 集合（F3-F6，始终无法检测，始终自动跳过）
+    var systemReservedKeyCodes: Set<UInt16> {
+        Set(rows.flatMap { $0 }.filter { $0.isSystemReserved }.map { $0.keyCode })
+    }
+
+    /// 功能键的 keyCode 集合（F1-F12，无权限时自动跳过）
+    var functionKeyCodes: Set<UInt16> {
+        Set(rows.flatMap { $0 }.filter { $0.isFunctionKey && $0.label.hasPrefix("F") }.map { $0.keyCode })
+    }
+
     // MARK: - MacBook 键盘布局（参考 CSS 实现 1:1 还原）
 
     // ┌─────────────────────────────────────────────────────────────────────┐
@@ -101,21 +114,23 @@ struct KeyboardLayout {
         // 14 个等宽功能键（含右侧电源键/Touch ID 占位）
         // 与数字行对齐：14键 × 1.0 + 13间距
         // ═══════════════════════════════════════════════════════════════
+        // F1-F12: 系统功能键，基础模式下无法拦截（会触发亮度、音量等系统功能）
+        // 有辅助功能权限时可以拦截所有按键
         let row0: [Key] = [
             Key(keyCode: 53, label: "esc", width: 1.0, isFunctionKey: true),
             Key(keyCode: 122, label: "F1", width: 1.0, isFunctionKey: true, symbolName: "sun.min"),
             Key(keyCode: 120, label: "F2", width: 1.0, isFunctionKey: true, symbolName: "sun.max"),
-            Key.placeholder(width: 1.0),  // F3 - Mission Control (系统拦截)
-            Key.placeholder(width: 1.0),  // F4 - Spotlight (系统拦截)
-            Key.placeholder(width: 1.0),  // F5 - Dictation (系统拦截)
-            Key.placeholder(width: 1.0),  // F6 - Do Not Disturb (系统拦截)
+            Key(keyCode: 99, label: "F3", width: 1.0, isFunctionKey: true, isSystemReserved: true, symbolName: "rectangle.3.group"),  // 无法检测
+            Key(keyCode: 118, label: "F4", width: 1.0, isFunctionKey: true, isSystemReserved: true, symbolName: "magnifyingglass"),   // 无法检测
+            Key(keyCode: 96, label: "F5", width: 1.0, isFunctionKey: true, isSystemReserved: true, symbolName: "mic.fill"),           // 无法检测
+            Key(keyCode: 97, label: "F6", width: 1.0, isFunctionKey: true, isSystemReserved: true, symbolName: "moon.fill"),          // 无法检测
             Key(keyCode: 98, label: "F7", width: 1.0, isFunctionKey: true, symbolName: "backward.fill"),
             Key(keyCode: 100, label: "F8", width: 1.0, isFunctionKey: true, symbolName: "playpause.fill"),
             Key(keyCode: 101, label: "F9", width: 1.0, isFunctionKey: true, symbolName: "forward.fill"),
             Key(keyCode: 109, label: "F10", width: 1.0, isFunctionKey: true, symbolName: "speaker.slash.fill"),
             Key(keyCode: 103, label: "F11", width: 1.0, isFunctionKey: true, symbolName: "speaker.wave.1.fill"),
             Key(keyCode: 111, label: "F12", width: 1.0, isFunctionKey: true, symbolName: "speaker.wave.3.fill"),
-            Key.placeholder(width: 1.0),  // 电源键/Touch ID 占位
+            Key.placeholder(width: 1.0),  // 电源键/Touch ID 占位（无法清洁）
         ]
 
         // ═══════════════════════════════════════════════════════════════

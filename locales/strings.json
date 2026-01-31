@@ -319,5 +319,213 @@
     "ar": "يحتاج CleanLock إلى إذن الوصول لاعتراض إدخال لوحة المفاتيح ومنع الكتابة العرضية أثناء التنظيف.",
     "fr": "CleanLock a besoin de l'autorisation d'accessibilité pour intercepter les entrées clavier et éviter la frappe accidentelle pendant le nettoyage.",
     "pt-BR": "CleanLock precisa de permissão de acessibilidade para interceptar a entrada do teclado e evitar digitação acidental durante a limpeza."
+  },
+
+  "continue": {
+    "zh-Hans": "继续",
+    "en": "Continue",
+    "es": "Continuar",
+    "hi": "जारी रखें",
+    "ar": "متابعة",
+    "fr": "Continuer",
+    "pt-BR": "Continuar"
+  },
+  "permission_setup_title": {
+    "zh-Hans": "开启完整功能",
+    "en": "Enable Full Features",
+    "es": "Habilitar funciones completas",
+    "hi": "पूर्ण सुविधाएं सक्षम करें",
+    "ar": "تمكين الميزات الكاملة",
+    "fr": "Activer toutes les fonctionnalités",
+    "pt-BR": "Ativar recursos completos"
+  },
+  "permission_setup_desc": {
+    "zh-Hans": "授予辅助功能权限后，CleanLock 可以拦截所有按键，包括 F1-F12 功能键，避免触发系统功能。",
+    "en": "With accessibility permission, CleanLock can intercept all keys including F1-F12, preventing system functions from triggering.",
+    "es": "Con permiso de accesibilidad, CleanLock puede interceptar todas las teclas incluyendo F1-F12, evitando que se activen funciones del sistema.",
+    "hi": "एक्सेसिबिलिटी अनुमति के साथ, CleanLock F1-F12 सहित सभी कुंजियों को रोक सकता है।",
+    "ar": "مع إذن الوصول، يمكن لـ CleanLock اعتراض جميع المفاتيح بما في ذلك F1-F12.",
+    "fr": "Avec l'autorisation d'accessibilité, CleanLock peut intercepter toutes les touches, y compris F1-F12.",
+    "pt-BR": "Com permissão de acessibilidade, CleanLock pode interceptar todas as teclas, incluindo F1-F12."
+  },
+  "permission_granted": {
+    "zh-Hans": "权限已授予",
+    "en": "Permission Granted",
+    "es": "Permiso otorgado",
+    "hi": "अनुमति प्रदान की गई",
+    "ar": "تم منح الإذن",
+    "fr": "Autorisation accordée",
+    "pt-BR": "Permissão concedida"
+  },
+  "permission_granted_desc": {
+    "zh-Hans": "CleanLock 现在可以拦截所有按键，享受完整的清洁体验！",
+    "en": "CleanLock can now intercept all keys. Enjoy the full cleaning experience!",
+    "es": "CleanLock ahora puede interceptar todas las teclas. ¡Disfruta la experiencia completa!",
+    "hi": "CleanLock अब सभी कुंजियों को रोक सकता है। पूर्ण अनुभव का आनंद लें!",
+    "ar": "يمكن لـ CleanLock الآن اعتراض جميع المفاتيح. استمتع بالتجربة الكاملة!",
+    "fr": "CleanLock peut maintenant intercepter toutes les touches. Profitez de l'expérience complète !",
+    "pt-BR": "CleanLock agora pode interceptar todas as teclas. Aproveite a experiência completa!"
+  },
+  "permission_benefit_1_title": {
+    "zh-Hans": "拦截所有按键",
+    "en": "Intercept All Keys",
+    "es": "Interceptar todas las teclas",
+    "hi": "सभी कुंजियों को रोकें",
+    "ar": "اعتراض جميع المفاتيح",
+    "fr": "Intercepter toutes les touches",
+    "pt-BR": "Interceptar todas as teclas"
+  },
+  "permission_benefit_1_desc": {
+    "zh-Hans": "包括 F1-F12 功能键，避免触发亮度、音量、调度中心等系统功能",
+    "en": "Including F1-F12 function keys, preventing brightness, volume, Mission Control, etc.",
+    "es": "Incluyendo teclas F1-F12, evitando brillo, volumen, Mission Control, etc.",
+    "hi": "F1-F12 फ़ंक्शन कुंजियों सहित, ब्राइटनेस, वॉल्यूम, Mission Control आदि को रोकें",
+    "ar": "بما في ذلك مفاتيح F1-F12، لمنع السطوع والصوت و Mission Control وما إلى ذلك",
+    "fr": "Y compris les touches F1-F12, empêchant luminosité, volume, Mission Control, etc.",
+    "pt-BR": "Incluindo teclas F1-F12, evitando brilho, volume, Mission Control, etc."
+  },
+  "permission_benefit_2_title": {
+    "zh-Hans": "更好的清洁体验",
+    "en": "Better Cleaning Experience",
+    "es": "Mejor experiencia de limpieza",
+    "hi": "बेहतर सफाई अनुभव",
+    "ar": "تجربة تنظيف أفضل",
+    "fr": "Meilleure expérience de nettoyage",
+    "pt-BR": "Melhor experiência de limpeza"
+  },
+  "permission_benefit_2_desc": {
+    "zh-Hans": "清洁时不会意外触发系统快捷键或切换应用",
+    "en": "No accidental system shortcuts or app switching while cleaning",
+    "es": "Sin atajos del sistema accidentales ni cambio de aplicaciones",
+    "hi": "सफाई के दौरान कोई आकस्मिक सिस्टम शॉर्टकट या ऐप स्विचिंग नहीं",
+    "ar": "لا اختصارات نظام عرضية أو تبديل تطبيقات أثناء التنظيف",
+    "fr": "Pas de raccourcis système accidentels ni de changement d'application",
+    "pt-BR": "Sem atalhos do sistema acidentais ou troca de aplicativos"
+  },
+  "open_system_settings": {
+    "zh-Hans": "打开系统设置",
+    "en": "Open System Settings",
+    "es": "Abrir Configuración del Sistema",
+    "hi": "सिस्टम सेटिंग्स खोलें",
+    "ar": "فتح إعدادات النظام",
+    "fr": "Ouvrir les Réglages Système",
+    "pt-BR": "Abrir Configurações do Sistema"
+  },
+  "skip_for_now": {
+    "zh-Hans": "暂时跳过",
+    "en": "Skip for Now",
+    "es": "Omitir por ahora",
+    "hi": "अभी के लिए छोड़ें",
+    "ar": "تخطي الآن",
+    "fr": "Ignorer pour l'instant",
+    "pt-BR": "Pular por enquanto"
+  },
+  "i_have_enabled": {
+    "zh-Hans": "我已开启",
+    "en": "I've Enabled It",
+    "es": "Ya lo habilité",
+    "hi": "मैंने सक्षम कर दिया है",
+    "ar": "لقد قمت بتمكينه",
+    "fr": "Je l'ai activé",
+    "pt-BR": "Já ativei"
+  },
+  "permission_limited": {
+    "zh-Hans": "基础模式",
+    "en": "Basic Mode",
+    "es": "Modo básico",
+    "hi": "बेसिक मोड",
+    "ar": "الوضع الأساسي",
+    "fr": "Mode basique",
+    "pt-BR": "Modo básico"
+  },
+  "permission_limited_desc": {
+    "zh-Hans": "F1-F12 功能键将自动跳过，启用辅助功能可清洁所有按键",
+    "en": "F1-F12 keys auto-skipped. Enable accessibility to clean all keys.",
+    "es": "Teclas F1-F12 omitidas. Habilita accesibilidad para limpiar todas.",
+    "hi": "F1-F12 कुंजियाँ छोड़ी गईं। सभी को साफ करने के लिए एक्सेसिबिलिटी सक्षम करें।",
+    "ar": "تم تخطي مفاتيح F1-F12. قم بتمكين إمكانية الوصول لتنظيف الكل.",
+    "fr": "Touches F1-F12 ignorées. Activez l'accessibilité pour tout nettoyer.",
+    "pt-BR": "Teclas F1-F12 puladas. Ative acessibilidade para limpar todas."
+  },
+  "permission_required_title": {
+    "zh-Hans": "需要辅助功能权限",
+    "en": "Accessibility Permission Required",
+    "es": "Se requiere permiso de accesibilidad",
+    "hi": "एक्सेसिबिलिटी अनुमति आवश्यक",
+    "ar": "مطلوب إذن إمكانية الوصول",
+    "fr": "Autorisation d'accessibilité requise",
+    "pt-BR": "Permissão de acessibilidade necessária"
+  },
+  "permission_required_desc": {
+    "zh-Hans": "CleanLock 需要辅助功能权限才能拦截所有键盘按键，包括 F1-F12 功能键。",
+    "en": "CleanLock needs accessibility permission to intercept all keyboard keys, including F1-F12 function keys.",
+    "es": "CleanLock necesita permiso de accesibilidad para interceptar todas las teclas, incluidas F1-F12.",
+    "hi": "CleanLock को सभी कीबोर्ड कुंजियों को इंटरसेप्ट करने के लिए एक्सेसिबिलिटी अनुमति चाहिए।",
+    "ar": "يحتاج CleanLock إلى إذن إمكانية الوصول لاعتراض جميع مفاتيح لوحة المفاتيح.",
+    "fr": "CleanLock a besoin de l'autorisation d'accessibilité pour intercepter toutes les touches.",
+    "pt-BR": "CleanLock precisa de permissão de acessibilidade para interceptar todas as teclas."
+  },
+  "permission_step_1": {
+    "zh-Hans": "点击下方按钮打开系统设置",
+    "en": "Click the button below to open System Settings",
+    "es": "Haz clic en el botón para abrir Configuración",
+    "hi": "सिस्टम सेटिंग्स खोलने के लिए नीचे बटन पर क्लिक करें",
+    "ar": "انقر على الزر أدناه لفتح إعدادات النظام",
+    "fr": "Cliquez sur le bouton pour ouvrir les Préférences Système",
+    "pt-BR": "Clique no botão para abrir Configurações do Sistema"
+  },
+  "permission_step_2": {
+    "zh-Hans": "点击 + 号，选择 CleanLock 并添加",
+    "en": "Click +, select CleanLock and add it",
+    "es": "Haz clic en +, selecciona CleanLock y añádelo",
+    "hi": "+ पर क्लिक करें, CleanLock चुनें और जोड़ें",
+    "ar": "انقر على +، حدد CleanLock وأضفه",
+    "fr": "Cliquez sur +, sélectionnez CleanLock et ajoutez-le",
+    "pt-BR": "Clique em +, selecione CleanLock e adicione-o"
+  },
+  "permission_step_3": {
+    "zh-Hans": "返回此应用，权限将自动生效",
+    "en": "Return to this app, permission will take effect automatically",
+    "es": "Vuelve a esta app, el permiso se aplicará automáticamente",
+    "hi": "इस ऐप पर वापस आएं, अनुमति स्वचालित रूप से लागू होगी",
+    "ar": "ارجع إلى هذا التطبيق، سيتم تطبيق الإذن تلقائياً",
+    "fr": "Revenez à cette app, l'autorisation prendra effet automatiquement",
+    "pt-BR": "Volte para este app, a permissão será aplicada automaticamente"
+  },
+  "open_settings": {
+    "zh-Hans": "打开系统设置",
+    "en": "Open System Settings",
+    "es": "Abrir Configuración",
+    "hi": "सिस्टम सेटिंग्स खोलें",
+    "ar": "فتح إعدادات النظام",
+    "fr": "Ouvrir les Préférences Système",
+    "pt-BR": "Abrir Configurações do Sistema"
+  },
+  "enable": {
+    "zh-Hans": "启用",
+    "en": "Enable",
+    "es": "Habilitar",
+    "hi": "सक्षम करें",
+    "ar": "تمكين",
+    "fr": "Activer",
+    "pt-BR": "Ativar"
+  },
+  "permission_full": {
+    "zh-Hans": "完整模式",
+    "en": "Full Mode",
+    "es": "Modo completo",
+    "hi": "पूर्ण मोड",
+    "ar": "الوضع الكامل",
+    "fr": "Mode complet",
+    "pt-BR": "Modo completo"
+  },
+  "permission_basic": {
+    "zh-Hans": "基础模式",
+    "en": "Basic Mode",
+    "es": "Modo básico",
+    "hi": "बेसिक मोड",
+    "ar": "الوضع الأساسي",
+    "fr": "Mode basique",
+    "pt-BR": "Modo básico"
   }
 }

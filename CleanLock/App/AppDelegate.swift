@@ -11,18 +11,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var welcomeWindow: NSWindow?
 
     private let stateManager = CleaningStateManager()
-    private let permissionManager = PermissionManager()
     private let hotKeyManager = HotKeyManager()
     private let keyInterceptor = KeyInterceptor()
 
     private var cancellables = Set<AnyCancellable>()
+    private var windowResignObserver: NSObjectProtocol?
 
     private static let hasLaunchedBeforeKey = "hasLaunchedBefore"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
         setupHotKey()
-        setupPermissionObserver()
 
         let hasLaunchedBefore = UserDefaults.standard.bool(forKey: Self.hasLaunchedBeforeKey)
         if hasLaunchedBefore {
@@ -92,22 +91,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKeyManager.start()
     }
 
-    private func setupPermissionObserver() {
-        permissionManager.$hasAccessibilityPermission
-            .dropFirst() // 忽略初始值
-            .sink { [weak self] hasPermission in
-                guard let self = self else { return }
-                if hasPermission {
-                    // 权限已获取，停止监控
-                    self.permissionManager.stopMonitoringPermission()
-                    // 如果当前没有清洁窗口，自动开始清洁
-                    if self.cleaningWindow == nil {
-                        self.showCleaningWindow()
-                    }
-                }
-            }
-            .store(in: &cancellables)
-    }
 
     @objc private func togglePopover() {
         guard let button = statusItem?.button else { return }
@@ -136,7 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 520),
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 680),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -155,37 +138,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func startCleaning() {
         guard cleaningWindow == nil else { return }
-
-        permissionManager.checkPermission()
-
-        if !permissionManager.hasAccessibilityPermission {
-            requestAccessibilityPermission()
-            return
-        }
-
         showCleaningWindow()
-    }
-
-    private func requestAccessibilityPermission() {
-        // 使用 AXIsProcessTrustedWithOptions 触发系统权限弹窗
-        // 系统弹窗会引导用户去系统设置授权，无需额外弹窗
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        let trusted = AXIsProcessTrustedWithOptions(options)
-
-        if trusted {
-            showCleaningWindow()
-        } else {
-            // 开始监控权限变化，用户授权后自动开始清洁
-            permissionManager.startMonitoringPermission()
-        }
     }
 
     private func showCleaningWindow() {
         guard cleaningWindow == nil else { return }
 
+        // 保存当前系统状态（音量、亮度等）
+        SystemStateManager.shared.saveCurrentState()
+
         let contentView = CleaningView(
             stateManager: stateManager,
-            permissionManager: permissionManager,
             onExit: { [weak self] in
                 self?.endCleaning()
             }
@@ -208,9 +171,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         cleaningWindow = window
         window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
 
-        stateManager.startCleaning()
+        // 监听窗口失去焦点事件，自动恢复焦点
+        // 这确保了在沙盒模式下，键盘事件始终发送到清洁窗口
+        windowResignObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResignKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak self, weak window] _ in
+            guard let self = self, let window = window else { return }
+            // 确保清洁窗口仍然存在且未在退出状态
+            if self.cleaningWindow != nil && self.stateManager.state != .exiting {
+                // 延迟一小段时间后恢复焦点，避免与用户操作冲突
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if self.cleaningWindow != nil {
+                        window.makeKeyAndOrderFront(nil)
+                        NSApp.activate(ignoringOtherApps: true)
+                    }
+                }
+            }
+        }
+
         setupKeyInterceptor()
+        // 根据是否有辅助功能权限决定是否自动跳过系统保留键
+        stateManager.startCleaning(hasFullAccess: keyInterceptor.hasFullAccess)
     }
 
     private func setupKeyInterceptor() {
@@ -231,12 +216,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        _ = keyInterceptor.start()
+        // 请求辅助功能权限（如果用户授权，可以拦截所有按键包括 F3-F6）
+        _ = keyInterceptor.start(requestPermission: true)
     }
 
     func endCleaning() {
         keyInterceptor.stop()
         stateManager.setExiting()
+
+        // 恢复清洁前的系统状态（音量、亮度等）
+        SystemStateManager.shared.restoreState()
+
+        // 移除窗口焦点观察者
+        if let observer = windowResignObserver {
+            NotificationCenter.default.removeObserver(observer)
+            windowResignObserver = nil
+        }
 
         guard let window = cleaningWindow else {
             stateManager.reset()

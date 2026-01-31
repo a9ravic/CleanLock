@@ -23,7 +23,6 @@ struct KeyboardSectionView: View {
 
 struct CleaningView: View {
     @ObservedObject var stateManager: CleaningStateManager
-    @ObservedObject var permissionManager: PermissionManager
 
     let onExit: () -> Void
 
@@ -48,13 +47,7 @@ struct CleaningView: View {
                 // Content based on state
                 switch stateManager.state {
                 case .idle:
-                    if !permissionManager.hasAccessibilityPermission {
-                        PermissionGuideView(
-                            permissionManager: permissionManager,
-                            onDismiss: onExit
-                        )
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                    }
+                    EmptyView()
 
                 case .cleaning:
                     cleaningContent(geometry: geometry)
@@ -327,7 +320,6 @@ struct CleaningView: View {
             manager.startCleaning()
             return manager
         }(),
-        permissionManager: PermissionManager(),
         onExit: {}
     )
 }

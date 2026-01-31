@@ -27,10 +27,14 @@ final class CleaningStateManager: ObservableObject {
 
     let totalKeys: Int
     private let allKeyCodes: Set<UInt16>
+    private let systemReservedKeyCodes: Set<UInt16>  // F3-F6，始终跳过
+    private let functionKeyCodes: Set<UInt16>        // F1-F12，无权限时跳过
 
     init(layout: KeyboardLayout = .macBook) {
         self.totalKeys = layout.allKeys.count
         self.allKeyCodes = Set(layout.allKeys.map { $0.keyCode })
+        self.systemReservedKeyCodes = layout.systemReservedKeyCodes
+        self.functionKeyCodes = layout.functionKeyCodes
     }
 
     var cleanedCount: Int {
@@ -46,8 +50,19 @@ final class CleaningStateManager: ObservableObject {
         state == .cleaning
     }
 
-    func startCleaning() {
-        cleanedKeys = []
+    /// 开始清洁
+    /// - Parameter hasFullAccess: 是否有完全访问权限（辅助功能）。
+    ///   - 有权限：F3-F6 自动亮起（无法检测），其他按键需要用户按键才亮
+    ///   - 无权限：F1-F12 全部自动亮起（无法检测）
+    func startCleaning(hasFullAccess: Bool = false) {
+        // F3-F6 始终无法检测，始终跳过
+        if hasFullAccess {
+            // 有辅助功能权限，只跳过 F3-F6
+            cleanedKeys = systemReservedKeyCodes
+        } else {
+            // 无权限，跳过所有功能键 F1-F12
+            cleanedKeys = functionKeyCodes
+        }
         state = .cleaning
     }
 

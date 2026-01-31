@@ -13,11 +13,8 @@ final class CleaningStateTests: XCTestCase {
         let manager = CleaningStateManager()
         manager.startCleaning()
 
-        if case .cleaning(let keys) = manager.state {
-            XCTAssertTrue(keys.isEmpty)
-        } else {
-            XCTFail("Expected cleaning state")
-        }
+        XCTAssertEqual(manager.state, .cleaning)
+        XCTAssertTrue(manager.cleanedKeys.isEmpty)
     }
 
     func testMarkKeyAsCleanedAddsToSet() {
@@ -25,11 +22,8 @@ final class CleaningStateTests: XCTestCase {
         manager.startCleaning()
         manager.markKeyCleaned(keyCode: 53) // esc
 
-        if case .cleaning(let keys) = manager.state {
-            XCTAssertTrue(keys.contains(53))
-        } else {
-            XCTFail("Expected cleaning state")
-        }
+        XCTAssertEqual(manager.state, .cleaning)
+        XCTAssertTrue(manager.cleanedKeys.contains(53))
     }
 
     func testProgressCalculation() {

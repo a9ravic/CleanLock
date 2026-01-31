@@ -247,7 +247,9 @@ struct KeyCapView: View {
 
     private static let validFunctionKeySymbols: Set<String> = [
         "sun.min", "sun.max", "backward.fill", "playpause.fill",
-        "forward.fill", "speaker.slash.fill", "speaker.wave.1.fill", "speaker.wave.3.fill"
+        "forward.fill", "speaker.slash.fill", "speaker.wave.1.fill", "speaker.wave.3.fill",
+        // 系统保留功能键 (F3-F6)
+        "rectangle.3.group", "magnifyingglass", "mic.fill", "moon.fill"
     ]
 
     private func functionKeySymbol(for name: String) -> String? {
