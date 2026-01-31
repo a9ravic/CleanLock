@@ -3,40 +3,76 @@ import SwiftUI
 // MARK: - macOS Native Completion View
 
 struct CompletionView: View {
-    @State private var showCheckmark = false
-    @State private var showRing = false
-    @State private var showText = false
-    @State private var countdown = 3
-    @State private var pulseScale: CGFloat = 1.0
+    @State private var showContent = false
+    @State private var ringProgress: CGFloat = 0
     @State private var countdownTimer: Timer?
 
+    private let duration: Double = 3.0
     let onComplete: () -> Void
 
     var body: some View {
-        VStack(spacing: DesignSystem.Spacing.xxl) {
-            // 成功图标
-            successIcon
-                .scaleEffect(showCheckmark ? 1.0 : 0.4)
-                .opacity(showCheckmark ? 1.0 : 0.0)
+        // 居中显示
+        ZStack {
+            // 成功图标 + 环形进度
+            ZStack {
+                // 环形进度轨道
+                Circle()
+                    .stroke(
+                        DesignSystem.Colors.success.opacity(0.2),
+                        lineWidth: 4
+                    )
+                    .frame(width: 96, height: 96)
 
-            // 文字内容
-            VStack(spacing: DesignSystem.Spacing.sm) {
-                Text("清洁完成！")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(DesignSystem.Colors.primaryText)
+                // 环形进度填充
+                Circle()
+                    .trim(from: 0, to: ringProgress)
+                    .stroke(
+                        DesignSystem.Colors.success.opacity(0.6),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 96, height: 96)
+                    .rotationEffect(.degrees(-90))
 
-                Text("即将退出... (\(countdown))")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(DesignSystem.Colors.secondaryText)
+                // 成功圆形背景
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                DesignSystem.Colors.success,
+                                DesignSystem.Colors.success.opacity(0.85)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 72, height: 72)
+                    .shadow(color: DesignSystem.Colors.success.opacity(0.3), radius: 12, y: 4)
+
+                // 对勾
+                Image(systemName: "checkmark")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.white)
             }
-            .opacity(showText ? 1 : 0)
-            .offset(y: showText ? 0 : 8)
+            .scaleEffect(showContent ? 1.0 : 0.5)
+            .opacity(showContent ? 1.0 : 0.0)
+
+            // 文字 - 位于圆形下方
+            VStack {
+                Spacer()
+                    .frame(height: 130)
+
+                Text("清洁完成")
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(DesignSystem.Colors.secondaryText)
+                    .opacity(showContent ? 1 : 0)
+                    .offset(y: showContent ? 0 : 8)
+            }
         }
-        .padding(DesignSystem.Spacing.xxxl + DesignSystem.Spacing.md)
+        .frame(width: 160, height: 180)
+        .padding(DesignSystem.Spacing.xl)
         .background(cardBackground)
         .onAppear {
             print("🟢 [CompletionView] onAppear called!")
-            // 重置所有状态，确保第二次及后续使用时状态正确
             resetState()
             startAnimations()
         }
@@ -44,42 +80,6 @@ struct CompletionView: View {
             print("🟢 [CompletionView] onDisappear called!")
             countdownTimer?.invalidate()
             countdownTimer = nil
-        }
-    }
-
-    // MARK: - Success Icon
-
-    private var successIcon: some View {
-        ZStack {
-            // 外圈脉冲动画
-            Circle()
-                .stroke(
-                    DesignSystem.Colors.success.opacity(0.3),
-                    lineWidth: 2
-                )
-                .frame(width: 88, height: 88)
-                .scaleEffect(pulseScale)
-                .opacity(showRing ? 1 : 0)
-
-            // 主圆圈
-            Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            DesignSystem.Colors.success,
-                            DesignSystem.Colors.success.opacity(0.85)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 72, height: 72)
-                .shadow(color: DesignSystem.Colors.success.opacity(0.3), radius: 12, y: 4)
-
-            // 对勾
-            Image(systemName: "checkmark")
-                .font(.system(size: 36, weight: .bold))
-                .foregroundColor(.white)
         }
     }
 
@@ -110,61 +110,31 @@ struct CompletionView: View {
 
     private func resetState() {
         print("🟢 [CompletionView] resetState() called")
-        // 确保每次显示时状态都是初始值
-        showCheckmark = false
-        showRing = false
-        showText = false
-        countdown = 3
-        pulseScale = 1.0
+        showContent = false
+        ringProgress = 0
         countdownTimer?.invalidate()
         countdownTimer = nil
-        print("🟢 [CompletionView] State reset complete, countdown=\(countdown)")
+        print("🟢 [CompletionView] State reset complete")
     }
 
     // MARK: - Animations
 
     private func startAnimations() {
-        // 对勾弹出
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-            showCheckmark = true
+        // 内容弹出
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            showContent = true
         }
 
-        // 光环出现
-        withAnimation(.easeOut(duration: 0.3).delay(0.2)) {
-            showRing = true
+        // 环形进度动画 - 使用线性动画确保平滑
+        withAnimation(.linear(duration: duration).delay(0.3)) {
+            ringProgress = 1.0
         }
 
-        // 文字淡入
-        withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
-            showText = true
+        // 完成回调
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration + 0.3) {
+            print("🟢 [CompletionView] Ring complete, calling onComplete()")
+            onComplete()
         }
-
-        // 脉冲动画
-        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true).delay(0.5)) {
-            pulseScale = 1.1
-        }
-
-        // 倒计时
-        startCountdown()
-    }
-
-    private func startCountdown() {
-        print("🟢 [CompletionView] startCountdown() called, creating timer...")
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            print("🟢 [CompletionView] Timer fired! countdown=\(countdown)")
-            if countdown > 1 {
-                countdown -= 1
-                print("🟢 [CompletionView] Countdown decremented to \(countdown)")
-            } else {
-                print("🟢 [CompletionView] Countdown finished, invalidating timer and calling onComplete...")
-                timer.invalidate()
-                countdownTimer = nil
-                print("🟢 [CompletionView] About to call onComplete()")
-                onComplete()
-                print("🟢 [CompletionView] onComplete() returned")
-            }
-        }
-        print("🟢 [CompletionView] Timer created: \(String(describing: countdownTimer))")
     }
 }
 

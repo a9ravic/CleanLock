@@ -81,7 +81,7 @@ struct KeyCapView: View {
         }
         .frame(width: keyWidth, height: keyHeight)
         .scaleEffect(isPressed ? 0.97 : 1.0)
-        .animation(DesignSystem.Animation.micro, value: isPressed)
+        .animation(DesignSystem.Animation.keyPress, value: isPressed)
     }
 
     // MARK: - 键帽主体
@@ -91,55 +91,54 @@ struct KeyCapView: View {
         let backgroundColor = isCleaned ? DesignSystem.Colors.keyCleaned :
             (key.isFunctionKey ? DesignSystem.Colors.keyBackground.opacity(0.7) : DesignSystem.Colors.keyBackground)
 
-        ZStack {
-            // 主背景
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            backgroundColor,
-                            backgroundColor.opacity(0.9)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+        // 使用 Canvas 替代多层 ZStack 以提升性能
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        backgroundColor,
+                        backgroundColor.opacity(0.9)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-
-            // 顶部高光
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(isCleaned ? 0.15 : 0.05),
-                            Color.clear
-                        ],
-                        startPoint: .top,
-                        endPoint: .center
-                    )
-                )
-
-            // 边框
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.06),
-                            DesignSystem.Colors.keyBorder.opacity(0.8)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: 0.5
-                )
-
-            // 清洁后的发光效果
-            if isCleaned {
+            )
+            .overlay(
+                // 顶部高光 - 合并为单一 overlay
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(DesignSystem.Colors.keyCleanedGlow.opacity(0.2))
-                    .blur(radius: baseSize * 0.06)
-            }
-        }
-        .animation(DesignSystem.Animation.standard, value: isCleaned)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(isCleaned ? 0.15 : 0.05),
+                                Color.clear
+                            ],
+                            startPoint: .top,
+                            endPoint: .center
+                        )
+                    )
+            )
+            .overlay(
+                // 边框
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.06),
+                                DesignSystem.Colors.keyBorder.opacity(0.8)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 0.5
+                    )
+            )
+            // 清洁后的发光效果 - 使用 shadow 替代 blur（GPU 更高效）
+            .shadow(
+                color: isCleaned ? DesignSystem.Colors.keyCleanedGlow.opacity(0.4) : .clear,
+                radius: baseSize * 0.08
+            )
+            // 仅对颜色变化应用动画，不影响子视图
+            .animation(.easeOut(duration: 0.15), value: isCleaned)
     }
 
     // MARK: - 键帽标签

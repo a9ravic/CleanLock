@@ -124,15 +124,18 @@ enum DesignSystem {
     // MARK: - Animation
 
     enum Animation {
-        // 微交互
-        static let micro = SwiftUI.Animation.easeOut(duration: 0.15)
-        static let quick = SwiftUI.Animation.easeOut(duration: 0.2)
-        static let standard = SwiftUI.Animation.easeOut(duration: 0.3)
-        static let smooth = SwiftUI.Animation.easeInOut(duration: 0.35)
+        // 微交互 - 优化后更快响应
+        static let micro = SwiftUI.Animation.easeOut(duration: 0.1)
+        static let quick = SwiftUI.Animation.easeOut(duration: 0.15)
+        static let standard = SwiftUI.Animation.easeOut(duration: 0.2)
+        static let smooth = SwiftUI.Animation.easeInOut(duration: 0.25)
 
-        // 弹簧动画
-        static let spring = SwiftUI.Animation.spring(response: 0.35, dampingFraction: 0.7)
-        static let bouncy = SwiftUI.Animation.spring(response: 0.4, dampingFraction: 0.6)
+        // 弹簧动画 - 更紧凑的响应
+        static let spring = SwiftUI.Animation.spring(response: 0.25, dampingFraction: 0.75)
+        static let bouncy = SwiftUI.Animation.spring(response: 0.3, dampingFraction: 0.65)
+
+        // 键帽专用 - 极快响应
+        static let keyPress = SwiftUI.Animation.easeOut(duration: 0.08)
     }
 }
 

@@ -27,6 +27,9 @@ struct KeyboardView: View {
         .padding(.horizontal, baseKeySize * 0.35)
         .padding(.vertical, baseKeySize * 0.3)
         .background(keyboardBackground)
+        // 使用 drawingGroup 将整个键盘视图合成为单一图层
+        // 大幅减少 82 个键帽的独立渲染开销
+        .drawingGroup()
     }
 
     // MARK: - Function Row（功能键行 - 矮键）

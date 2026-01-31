@@ -84,8 +84,9 @@ struct CleaningView: View {
                         }
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: stateManager.state)
         }
+        // 移除全局 animation 修饰符，改用更精确的局部动画控制
+        // 避免状态变化时触发整个视图树的动画计算
     }
 
     // MARK: - Native Background
@@ -167,30 +168,31 @@ struct CleaningView: View {
 
     private var progressIndicator: some View {
         VStack(spacing: DesignSystem.Spacing.sm) {
-            // 进度条
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    // 轨道
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(DesignSystem.Colors.separator.opacity(0.3))
+            // 进度条 - 使用固定宽度避免 GeometryReader 开销
+            ZStack(alignment: .leading) {
+                // 轨道
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(DesignSystem.Colors.separator.opacity(0.3))
+                    .frame(width: 200, height: 6)
 
-                    // 填充
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    DesignSystem.Colors.brand,
-                                    DesignSystem.Colors.brandLight
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+                // 填充 - 使用 scaleEffect 替代 frame 变化（GPU 加速）
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                DesignSystem.Colors.brand,
+                                DesignSystem.Colors.brandLight
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
-                        .frame(width: geo.size.width * progressPercentage)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: progressPercentage)
-                }
+                    )
+                    .frame(width: 200, height: 6)
+                    .scaleEffect(x: progressPercentage, y: 1.0, anchor: .leading)
+                    .animation(.easeOut(duration: 0.15), value: progressPercentage)
             }
             .frame(width: 200, height: 6)
+            .clipped()
 
             // 计数
             HStack(spacing: DesignSystem.Spacing.xs) {
@@ -297,14 +299,15 @@ struct CleaningView: View {
     }
 
     private func startEscTimer() {
-        escTimer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { _ in
+        // 降低更新频率：60ms (~16fps) 足够流畅且减少开销
+        escTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { _ in
             guard let startTime = escPressStartTime else { return }
             let elapsed = Date().timeIntervalSince(startTime)
             let progress = min(elapsed / 3.0, 1.0)
 
-            withAnimation(.linear(duration: 0.03)) {
-                escHoldProgress = progress
-            }
+            // 直接更新状态，不使用 withAnimation 避免频繁动画计算
+            // Circle trim 本身会平滑过渡
+            escHoldProgress = progress
 
             if progress >= 1.0 {
                 escTimer?.invalidate()
