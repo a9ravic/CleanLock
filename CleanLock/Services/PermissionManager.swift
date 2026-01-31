@@ -6,7 +6,9 @@ import Combine
 final class PermissionManager: ObservableObject {
     @Published private(set) var hasAccessibilityPermission: Bool = false
 
-    private var timer: Timer?
+    // 使用 nonisolated(unsafe) 允许在 deinit 中安全访问
+    // Timer.invalidate() 是线程安全的
+    nonisolated(unsafe) private var timer: Timer?
 
     init() {
         checkPermission()

@@ -58,10 +58,19 @@ final class HotKeyManager: ObservableObject {
 
         private func keyCodeToString(_ keyCode: UInt16) -> String {
             let keyMap: [UInt16: String] = [
+                // 字母键
                 0: "A", 1: "S", 2: "D", 3: "F", 4: "H", 5: "G", 6: "Z", 7: "X",
                 8: "C", 9: "V", 11: "B", 12: "Q", 13: "W", 14: "E", 15: "R",
                 16: "Y", 17: "T", 31: "O", 32: "U", 34: "I", 35: "P", 37: "L",
-                38: "J", 40: "K", 45: "N", 46: "M"
+                38: "J", 40: "K", 45: "N", 46: "M",
+                // 数字键
+                18: "1", 19: "2", 20: "3", 21: "4", 22: "6", 23: "5",
+                24: "=", 25: "9", 26: "7", 27: "-", 28: "8", 29: "0",
+                // 符号键
+                30: "]", 33: "[", 39: "'", 41: ";", 42: "\\", 43: ",",
+                44: "/", 47: ".", 50: "`",
+                // 功能键
+                36: "↩", 48: "⇥", 49: "Space", 51: "⌫", 53: "Esc"
             ]
             return keyMap[keyCode] ?? "?"
         }
@@ -181,6 +190,13 @@ final class HotKeyManager: ObservableObject {
 
     deinit {
         // 注意：deinit 不在 MainActor 上下文中
-        // 热键清理会在 stop() 或对象释放时自动处理
+        // 直接调用 Carbon API 清理资源（这些是 C API，线程安全）
+        if let ref = hotKeyRef {
+            UnregisterEventHotKey(ref)
+        }
+        if let ref = eventHandlerRef {
+            RemoveEventHandler(ref)
+        }
+        globalHotKeyHandler = nil
     }
 }

@@ -161,16 +161,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Cleaning
 
     func startCleaning() {
-        guard cleaningWindow == nil else { return }
+        print("🔵 [AppDelegate] startCleaning() called")
+        guard cleaningWindow == nil else {
+            print("🔵 [AppDelegate] cleaningWindow already exists, returning")
+            return
+        }
 
         permissionManager.checkPermission()
 
         // 如果没有权限，先请求权限
         if !permissionManager.hasAccessibilityPermission {
+            print("🔵 [AppDelegate] No permission, requesting...")
             requestAccessibilityPermission()
             return
         }
 
+        print("🔵 [AppDelegate] Has permission, showing cleaning window")
         showCleaningWindow()
     }
 
@@ -189,10 +195,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showCleaningWindow() {
+        print("🔵 [AppDelegate] showCleaningWindow() called")
+
+        // 防止重复创建窗口
+        guard cleaningWindow == nil else {
+            print("🔵 [AppDelegate] cleaningWindow already exists, skipping creation")
+            return
+        }
+
         let contentView = CleaningView(
             stateManager: stateManager,
             permissionManager: permissionManager,
             onExit: { [weak self] in
+                print("🔵 [AppDelegate] onExit callback triggered!")
                 self?.endCleaning()
             }
         )
@@ -241,21 +256,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func endCleaning() {
+        print("🔴 [AppDelegate] endCleaning() called")
         keyInterceptor.stop()
-        stateManager.reset()
 
-        guard let window = cleaningWindow else { return }
+        // 先设置为退出状态，保持当前视图直到动画完成
+        stateManager.setExiting()
+        print("🔴 [AppDelegate] State set to exiting")
+
+        guard let window = cleaningWindow else {
+            print("🔴 [AppDelegate] No cleaningWindow, just resetting state")
+            stateManager.reset()
+            return
+        }
 
         // 先清除引用，防止重复调用
         cleaningWindow = nil
+        print("🔴 [AppDelegate] cleaningWindow reference cleared, starting fade animation")
 
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0.3
             window.animator().alphaValue = 0
-        } completionHandler: {
-            // 确保在主线程上关闭窗口
+        } completionHandler: { [weak self] in
+            print("🔴 [AppDelegate] Fade animation completed")
+            // 确保在主线程上关闭窗口并重置状态
             DispatchQueue.main.async {
+                print("🔴 [AppDelegate] Ordering out window and resetting state")
                 window.orderOut(nil)
+                self?.stateManager.reset()
+                print("🔴 [AppDelegate] endCleaning() fully completed")
             }
         }
     }

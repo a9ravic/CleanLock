@@ -79,6 +79,14 @@ final class KeyInterceptor {
     }
 
     private func handleEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        // Handle tap disabled events - re-enable the tap
+        if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            if let tap = eventTap {
+                CGEvent.tapEnable(tap: tap, enable: true)
+            }
+            return Unmanaged.passRetained(event)
+        }
+
         // Handle special function keys (NX_SYSDEFINED)
         // These are brightness, volume, keyboard backlight, etc.
         if type.rawValue == EventConstants.systemDefinedEventType {

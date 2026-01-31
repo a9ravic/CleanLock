@@ -23,6 +23,9 @@ final class CleaningStateManager: ObservableObject {
     @Published private(set) var state: CleaningState = .idle
     @Published var isEscPressed: Bool = false
 
+    /// 每次进入 completed 状态时递增，用于强制 SwiftUI 重建 CompletionView
+    @Published private(set) var completionId: Int = 0
+
     let totalKeys: Int
     private let allKeyCodes: Set<UInt16>
 
@@ -43,6 +46,7 @@ final class CleaningStateManager: ObservableObject {
     }
 
     func startCleaning() {
+        print("🟣 [StateManager] startCleaning() called")
         state = .cleaning(Set())
     }
 
@@ -53,6 +57,8 @@ final class CleaningStateManager: ObservableObject {
         keys.insert(keyCode)
 
         if keys.count == totalKeys {
+            completionId += 1  // 递增 ID，强制 SwiftUI 重建 CompletionView
+            print("🟣 [StateManager] All keys cleaned! Setting state to .completed, completionId=\(completionId)")
             state = .completed
         } else {
             state = .cleaning(keys)
@@ -67,10 +73,12 @@ final class CleaningStateManager: ObservableObject {
     }
 
     func setExiting() {
+        print("🟣 [StateManager] setExiting() called, state changing from \(state) to .exiting")
         state = .exiting
     }
 
     func reset() {
+        print("🟣 [StateManager] reset() called, state changing from \(state) to .idle")
         state = .idle
     }
 }
