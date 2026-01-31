@@ -1,0 +1,44 @@
+name: CleanLock
+options:
+  bundleIdPrefix: com.zone
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  CleanLock:
+    type: application
+    platform: macOS
+    sources:
+      - CleanLock
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zone.cleanlock
+        PRODUCT_NAME: CleanLock
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        INFOPLIST_FILE: CleanLock/App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: CleanLock/CleanLock.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+
+  CleanLockTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - CleanLockTests
+    dependencies:
+      - target: CleanLock
+    settings:
+      base:
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/CleanLock.app/Contents/MacOS/CleanLock"
