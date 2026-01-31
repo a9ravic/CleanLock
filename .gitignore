@@ -1,0 +1,31 @@
+# Local signing configuration (contains developer team ID)
+local.xcconfig
+
+# Xcode generated project - run `xcodegen generate` to recreate
+CleanLock.xcodeproj/
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.xcscmblueprint
+
+# macOS
+.DS_Store
+._*
+
+# Build
+build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Archives
+*.xcarchive

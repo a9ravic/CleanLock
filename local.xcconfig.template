@@ -1,0 +1,9 @@
+// Copy this file to local.xcconfig and fill in your development team ID
+// cp local.xcconfig.template local.xcconfig
+
+// Your Apple Development Team ID (find in Xcode or developer.apple.com)
+DEVELOPMENT_TEAM = YOUR_TEAM_ID_HERE
+
+// Code signing settings
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Apple Development

@@ -2,11 +2,26 @@ import Foundation
 import AppKit
 import Carbon
 import Combine
+import os.lock
 
-// MARK: - Global HotKey Handler
+// MARK: - Thread-Safe Global HotKey Handler
 
-/// 全局热键处理器 - 使用 Carbon API 无需辅助功能权限
-private var globalHotKeyHandler: (() -> Void)?
+/// 线程安全的全局热键处理器容器
+private final class HotKeyHandlerContainer: @unchecked Sendable {
+    private var _handler: (() -> Void)?
+    private let lock = OSAllocatedUnfairLock()
+
+    var handler: (() -> Void)? {
+        get { lock.withLock { _handler } }
+        set { lock.withLock { _handler = newValue } }
+    }
+
+    func invoke() {
+        lock.withLock { _handler }?()
+    }
+}
+
+private let globalHotKeyContainer = HotKeyHandlerContainer()
 
 /// Carbon 事件处理回调
 private func carbonHotKeyHandler(
@@ -14,7 +29,7 @@ private func carbonHotKeyHandler(
     theEvent: EventRef?,
     userData: UnsafeMutableRawPointer?
 ) -> OSStatus {
-    globalHotKeyHandler?()
+    globalHotKeyContainer.invoke()
     return noErr
 }
 
@@ -115,8 +130,8 @@ final class HotKeyManager: ObservableObject {
     }
 
     private func registerHotKey() {
-        // 设置全局回调
-        globalHotKeyHandler = { [weak self] in
+        // 设置全局回调（线程安全）
+        globalHotKeyContainer.handler = { [weak self] in
             Task { @MainActor in
                 self?.onHotKeyPressed?()
             }
@@ -170,7 +185,7 @@ final class HotKeyManager: ObservableObject {
             self.eventHandlerRef = nil
         }
 
-        globalHotKeyHandler = nil
+        globalHotKeyContainer.handler = nil
     }
 
     func saveHotKey() {
@@ -191,12 +206,14 @@ final class HotKeyManager: ObservableObject {
     deinit {
         // 注意：deinit 不在 MainActor 上下文中
         // 直接调用 Carbon API 清理资源（这些是 C API，线程安全）
+        // hotKeyRef 和 eventHandlerRef 的访问在 Swift 6 严格并发下可能有警告
+        // 但由于 deinit 时没有其他线程持有 self 引用，这是安全的
         if let ref = hotKeyRef {
             UnregisterEventHotKey(ref)
         }
         if let ref = eventHandlerRef {
             RemoveEventHandler(ref)
         }
-        globalHotKeyHandler = nil
+        globalHotKeyContainer.handler = nil
     }
 }
