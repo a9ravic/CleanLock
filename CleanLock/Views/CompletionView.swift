@@ -7,7 +7,7 @@ struct CompletionView: View {
     @State private var ringProgress: CGFloat = 0
     @State private var countdownTimer: Timer?
 
-    private let duration: Double = 3.0
+    private let duration: Double = 1.7
     let onComplete: () -> Void
 
     var body: some View {
