@@ -44,7 +44,7 @@ struct MainWindowView: View {
                     .font(DesignSystem.Typography.title)
                     .foregroundColor(DesignSystem.Colors.primaryText)
 
-                Text("清洁 MacBook 键盘时锁定键盘防止误触")
+                Text(String(localized: "welcome_subtitle"))
                     .font(DesignSystem.Typography.callout)
                     .foregroundColor(DesignSystem.Colors.secondaryText)
             }
@@ -55,11 +55,11 @@ struct MainWindowView: View {
 
     private var actionSection: some View {
         VStack(spacing: DesignSystem.Spacing.md) {
-            BrandButton(title: "开始清洁", icon: "play.fill", action: onStartCleaning)
+            BrandButton(title: String(localized: "start_cleaning"), icon: "play.fill", action: onStartCleaning)
 
             // Hotkey hint
             HStack(spacing: DesignSystem.Spacing.xs) {
-                Text("快捷键")
+                Text(String(localized: "shortcut"))
                     .font(DesignSystem.Typography.caption)
                     .foregroundColor(DesignSystem.Colors.tertiaryText)
 
@@ -76,7 +76,7 @@ struct MainWindowView: View {
             SettingRow(
                 icon: "command",
                 iconColor: DesignSystem.Colors.brand,
-                title: "快捷键"
+                title: String(localized: "shortcut")
             ) {
                 HotKeyRecorderView(hotKey: Binding(
                     get: { hotKeyManager.currentHotKey },
@@ -93,7 +93,7 @@ struct MainWindowView: View {
             SettingRow(
                 icon: "power",
                 iconColor: .green,
-                title: "开机自动启动"
+                title: String(localized: "launch_at_login")
             ) {
                 Toggle("", isOn: $launchAtLogin)
                     .toggleStyle(.switch)
@@ -104,15 +104,15 @@ struct MainWindowView: View {
 
             // Instructions
             VStack(alignment: .leading, spacing: DesignSystem.Spacing.md) {
-                Text("使用说明")
+                Text(String(localized: "instructions"))
                     .font(DesignSystem.Typography.captionMedium)
                     .foregroundColor(DesignSystem.Colors.tertiaryText)
                     .textCase(.uppercase)
 
                 VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
-                    InstructionItem(icon: "sparkles", text: "按下的键会亮起表示已清洁")
-                    InstructionItem(icon: "checkmark.circle", text: "全部清洁完成后自动退出")
-                    InstructionItem(icon: "escape", text: "长按 ESC 键可提前退出")
+                    InstructionItem(icon: "sparkles", text: String(localized: "instruction_1"))
+                    InstructionItem(icon: "checkmark.circle", text: String(localized: "instruction_2"))
+                    InstructionItem(icon: "escape", text: String(localized: "instruction_3"))
                 }
             }
         }

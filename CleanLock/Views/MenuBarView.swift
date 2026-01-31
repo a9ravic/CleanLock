@@ -23,7 +23,7 @@ struct MenuBarView: View {
             // Start cleaning - 主要操作
             MenuItemButton(
                 icon: "play.fill",
-                title: "开始清洁",
+                title: String(localized: "start_cleaning"),
                 shortcut: hotKeyManager.currentHotKey.displayString,
                 action: onStartCleaning
             )
@@ -42,7 +42,7 @@ struct MenuBarView: View {
                         .foregroundColor(DesignSystem.Colors.secondaryText)
                         .frame(width: 16)
 
-                    Text("开机启动")
+                    Text(String(localized: "launch_at_login"))
                         .font(DesignSystem.Typography.body)
                         .foregroundColor(DesignSystem.Colors.primaryText)
 
@@ -57,7 +57,7 @@ struct MenuBarView: View {
 
                 MenuItemButton(
                     icon: "command",
-                    title: "快捷键设置...",
+                    title: String(localized: "shortcut_settings"),
                     action: onOpenSettings
                 )
             }
@@ -70,13 +70,13 @@ struct MenuBarView: View {
             VStack(spacing: 0) {
                 MenuItemButton(
                     icon: "book.closed",
-                    title: "使用说明",
+                    title: String(localized: "instructions"),
                     action: onOpenWelcome
                 )
 
                 MenuItemButton(
                     icon: "info.circle",
-                    title: "关于 CleanLock",
+                    title: String(localized: "about"),
                     action: {
                         NSApplication.shared.orderFrontStandardAboutPanel()
                     }
@@ -90,7 +90,7 @@ struct MenuBarView: View {
             // Quit
             MenuItemButton(
                 icon: "power",
-                title: "退出",
+                title: String(localized: "quit"),
                 isDestructive: true,
                 action: onQuit
             )
@@ -112,7 +112,7 @@ struct MenuBarView: View {
                     .font(DesignSystem.Typography.bodySemibold)
                     .foregroundColor(DesignSystem.Colors.primaryText)
 
-                Text("键盘清洁助手")
+                Text(String(localized: "app_tagline"))
                     .font(DesignSystem.Typography.caption)
                     .foregroundColor(DesignSystem.Colors.secondaryText)
             }

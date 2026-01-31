@@ -88,11 +88,11 @@ struct PermissionGuideView: View {
 
     private var textSection: some View {
         VStack(spacing: DesignSystem.Spacing.md) {
-            Text("需要辅助功能权限")
+            Text(String(localized: "permission_required"))
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(DesignSystem.Colors.primaryText)
 
-            Text("为了在清洁时拦截键盘输入防止误触，\n请在系统设置中授予辅助功能权限")
+            Text(String(localized: "permission_desc"))
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(DesignSystem.Colors.secondaryText)
                 .multilineTextAlignment(.center)
@@ -110,7 +110,7 @@ struct PermissionGuideView: View {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 13, weight: .semibold))
 
-                    Text("打开系统设置")
+                    Text(String(localized: "open_settings"))
                         .font(.system(size: 13, weight: .semibold))
                 }
                 .foregroundColor(.white)
@@ -126,7 +126,7 @@ struct PermissionGuideView: View {
 
             // 次要按钮
             Button(action: onDismiss) {
-                Text("稍后再说")
+                Text(String(localized: "later"))
                     .font(DesignSystem.Typography.bodyMedium)
                     .foregroundColor(DesignSystem.Colors.tertiaryText)
             }

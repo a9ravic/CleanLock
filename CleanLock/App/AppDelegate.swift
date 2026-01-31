@@ -275,7 +275,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "欢迎使用 CleanLock"
+        window.title = String(localized: "welcome_title")
         window.center()
         window.contentView = NSHostingView(rootView: contentView)
         window.isReleasedWhenClosed = false

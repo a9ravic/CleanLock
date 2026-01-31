@@ -1,0 +1,323 @@
+{
+  "_meta": {
+    "languages": ["en", "zh-Hans", "es", "hi", "ar", "fr", "pt-BR"],
+    "sourceLanguage": "zh-Hans",
+    "version": "1.1"
+  },
+
+  "cleaning_instruction": {
+    "zh-Hans": "擦拭键盘，按下的键会亮起",
+    "en": "Wipe the keyboard, pressed keys will light up",
+    "es": "Limpia el teclado, las teclas presionadas se iluminarán",
+    "hi": "कीबोर्ड साफ करें, दबाई गई कुंजियाँ जलेंगी",
+    "ar": "امسح لوحة المفاتيح، المفاتيح المضغوطة ستضيء",
+    "fr": "Essuyez le clavier, les touches pressées s'allumeront",
+    "pt-BR": "Limpe o teclado, as teclas pressionadas acenderão"
+  },
+  "key_unit": {
+    "zh-Hans": "键",
+    "en": "keys",
+    "es": "teclas",
+    "hi": "कुंजियाँ",
+    "ar": "مفاتيح",
+    "fr": "touches",
+    "pt-BR": "teclas"
+  },
+  "exit_hint": {
+    "zh-Hans": "长按 ESC 3秒退出",
+    "en": "Hold ESC for 3 seconds to exit",
+    "es": "Mantén ESC 3 segundos para salir",
+    "hi": "बाहर निकलने के लिए ESC को 3 सेकंड दबाएं",
+    "ar": "اضغط ESC لمدة 3 ثوانٍ للخروج",
+    "fr": "Maintenez ESC pendant 3 secondes pour quitter",
+    "pt-BR": "Segure ESC por 3 segundos para sair"
+  },
+  "cleaning_complete": {
+    "zh-Hans": "清洁完成",
+    "en": "Cleaning Complete",
+    "es": "Limpieza completada",
+    "hi": "सफाई पूर्ण",
+    "ar": "اكتمل التنظيف",
+    "fr": "Nettoyage terminé",
+    "pt-BR": "Limpeza concluída"
+  },
+  "welcome_subtitle": {
+    "zh-Hans": "清洁 MacBook 键盘时锁定键盘防止误触",
+    "en": "Lock keyboard while cleaning to prevent accidental input",
+    "es": "Bloquea el teclado mientras limpias para evitar toques accidentales",
+    "hi": "सफाई के दौरान गलती से इनपुट रोकने के लिए कीबोर्ड लॉक करें",
+    "ar": "قفل لوحة المفاتيح أثناء التنظيف لمنع الإدخال العرضي",
+    "fr": "Verrouillez le clavier pendant le nettoyage pour éviter les frappes accidentelles",
+    "pt-BR": "Bloqueie o teclado durante a limpeza para evitar toques acidentais"
+  },
+  "feature_visual_title": {
+    "zh-Hans": "可视化清洁",
+    "en": "Visual Cleaning",
+    "es": "Limpieza visual",
+    "hi": "विज़ुअल सफाई",
+    "ar": "تنظيف مرئي",
+    "fr": "Nettoyage visuel",
+    "pt-BR": "Limpeza visual"
+  },
+  "feature_visual_desc": {
+    "zh-Hans": "按下的键会亮起表示已清洁",
+    "en": "Pressed keys light up to show they're cleaned",
+    "es": "Las teclas presionadas se iluminan para mostrar que están limpias",
+    "hi": "दबाई गई कुंजियाँ साफ होने का संकेत देने के लिए जलती हैं",
+    "ar": "المفاتيح المضغوطة تضيء لتظهر أنها نظيفة",
+    "fr": "Les touches pressées s'allument pour indiquer qu'elles sont nettoyées",
+    "pt-BR": "As teclas pressionadas acendem para mostrar que foram limpas"
+  },
+  "feature_auto_title": {
+    "zh-Hans": "自动解锁",
+    "en": "Auto Unlock",
+    "es": "Desbloqueo automático",
+    "hi": "ऑटो अनलॉक",
+    "ar": "فتح تلقائي",
+    "fr": "Déverrouillage auto",
+    "pt-BR": "Desbloqueio automático"
+  },
+  "feature_auto_desc": {
+    "zh-Hans": "全部清洁完成后自动退出",
+    "en": "Automatically exits when all keys are cleaned",
+    "es": "Sale automáticamente cuando todas las teclas están limpias",
+    "hi": "सभी कुंजियाँ साफ होने पर स्वचालित रूप से बाहर निकलें",
+    "ar": "يخرج تلقائياً عند تنظيف جميع المفاتيح",
+    "fr": "Quitte automatiquement quand toutes les touches sont nettoyées",
+    "pt-BR": "Sai automaticamente quando todas as teclas estão limpas"
+  },
+  "feature_shortcut_title": {
+    "zh-Hans": "快捷启动",
+    "en": "Quick Start",
+    "es": "Inicio rápido",
+    "hi": "त्वरित प्रारंभ",
+    "ar": "بدء سريع",
+    "fr": "Démarrage rapide",
+    "pt-BR": "Início rápido"
+  },
+  "feature_shortcut_desc": {
+    "zh-Hans": "按下 ⌘⇧K 快速启动清洁模式",
+    "en": "Press ⌘⇧K to quickly start cleaning mode",
+    "es": "Presiona ⌘⇧K para iniciar rápidamente el modo limpieza",
+    "hi": "सफाई मोड शुरू करने के लिए ⌘⇧K दबाएं",
+    "ar": "اضغط ⌘⇧K لبدء وضع التنظيف بسرعة",
+    "fr": "Appuyez sur ⌘⇧K pour démarrer rapidement le mode nettoyage",
+    "pt-BR": "Pressione ⌘⇧K para iniciar rapidamente o modo limpeza"
+  },
+  "get_started": {
+    "zh-Hans": "开始使用",
+    "en": "Get Started",
+    "es": "Comenzar",
+    "hi": "शुरू करें",
+    "ar": "ابدأ الآن",
+    "fr": "Commencer",
+    "pt-BR": "Começar"
+  },
+  "permission_required": {
+    "zh-Hans": "需要辅助功能权限",
+    "en": "Accessibility Permission Required",
+    "es": "Se requiere permiso de accesibilidad",
+    "hi": "एक्सेसिबिलिटी अनुमति आवश्यक",
+    "ar": "مطلوب إذن الوصول",
+    "fr": "Autorisation d'accessibilité requise",
+    "pt-BR": "Permissão de acessibilidade necessária"
+  },
+  "permission_desc": {
+    "zh-Hans": "为了在清洁时拦截键盘输入防止误触，\n请在系统设置中授予辅助功能权限",
+    "en": "To intercept keyboard input while cleaning,\nplease grant accessibility permission in System Settings",
+    "es": "Para interceptar la entrada del teclado durante la limpieza,\npor favor otorga permiso de accesibilidad en Configuración del Sistema",
+    "hi": "सफाई के दौरान कीबोर्ड इनपुट को रोकने के लिए,\nकृपया सिस्टम सेटिंग्स में एक्सेसिबिलिटी अनुमति दें",
+    "ar": "لاعتراض إدخال لوحة المفاتيح أثناء التنظيف،\nيرجى منح إذن الوصول في إعدادات النظام",
+    "fr": "Pour intercepter les entrées clavier pendant le nettoyage,\nveuillez accorder l'autorisation d'accessibilité dans les Réglages Système",
+    "pt-BR": "Para interceptar a entrada do teclado durante a limpeza,\npor favor conceda permissão de acessibilidade nas Configurações do Sistema"
+  },
+  "open_settings": {
+    "zh-Hans": "打开系统设置",
+    "en": "Open System Settings",
+    "es": "Abrir Configuración del Sistema",
+    "hi": "सिस्टम सेटिंग्स खोलें",
+    "ar": "فتح إعدادات النظام",
+    "fr": "Ouvrir les Réglages Système",
+    "pt-BR": "Abrir Configurações do Sistema"
+  },
+  "later": {
+    "zh-Hans": "稍后再说",
+    "en": "Later",
+    "es": "Más tarde",
+    "hi": "बाद में",
+    "ar": "لاحقاً",
+    "fr": "Plus tard",
+    "pt-BR": "Mais tarde"
+  },
+  "start_cleaning": {
+    "zh-Hans": "开始清洁",
+    "en": "Start Cleaning",
+    "es": "Iniciar limpieza",
+    "hi": "सफाई शुरू करें",
+    "ar": "بدء التنظيف",
+    "fr": "Démarrer le nettoyage",
+    "pt-BR": "Iniciar limpeza"
+  },
+  "shortcut": {
+    "zh-Hans": "快捷键",
+    "en": "Shortcut",
+    "es": "Atajo",
+    "hi": "शॉर्टकट",
+    "ar": "اختصار",
+    "fr": "Raccourci",
+    "pt-BR": "Atalho"
+  },
+  "launch_at_login": {
+    "zh-Hans": "开机自动启动",
+    "en": "Launch at Login",
+    "es": "Iniciar al arrancar",
+    "hi": "लॉगिन पर लॉन्च करें",
+    "ar": "تشغيل عند الدخول",
+    "fr": "Lancer au démarrage",
+    "pt-BR": "Iniciar no login"
+  },
+  "instructions": {
+    "zh-Hans": "使用说明",
+    "en": "Instructions",
+    "es": "Instrucciones",
+    "hi": "निर्देश",
+    "ar": "التعليمات",
+    "fr": "Instructions",
+    "pt-BR": "Instruções"
+  },
+  "instruction_1": {
+    "zh-Hans": "按下的键会亮起表示已清洁",
+    "en": "Pressed keys light up to show they're cleaned",
+    "es": "Las teclas presionadas se iluminan para mostrar que están limpias",
+    "hi": "दबाई गई कुंजियाँ साफ होने का संकेत देने के लिए जलती हैं",
+    "ar": "المفاتيح المضغوطة تضيء لتظهر أنها نظيفة",
+    "fr": "Les touches pressées s'allument pour indiquer qu'elles sont nettoyées",
+    "pt-BR": "As teclas pressionadas acendem para mostrar que foram limpas"
+  },
+  "instruction_2": {
+    "zh-Hans": "全部清洁完成后自动退出",
+    "en": "Automatically exits when all keys are cleaned",
+    "es": "Sale automáticamente cuando todas las teclas están limpias",
+    "hi": "सभी कुंजियाँ साफ होने पर स्वचालित रूप से बाहर निकलें",
+    "ar": "يخرج تلقائياً عند تنظيف جميع المفاتيح",
+    "fr": "Quitte automatiquement quand toutes les touches sont nettoyées",
+    "pt-BR": "Sai automaticamente quando todas as teclas estão limpas"
+  },
+  "instruction_3": {
+    "zh-Hans": "长按 ESC 键可提前退出",
+    "en": "Hold ESC to exit early",
+    "es": "Mantén ESC para salir antes",
+    "hi": "जल्दी बाहर निकलने के लिए ESC दबाएं",
+    "ar": "اضغط ESC للخروج مبكراً",
+    "fr": "Maintenez ESC pour quitter plus tôt",
+    "pt-BR": "Segure ESC para sair antes"
+  },
+  "shortcut_settings": {
+    "zh-Hans": "快捷键设置...",
+    "en": "Shortcut Settings...",
+    "es": "Configuración de atajos...",
+    "hi": "शॉर्टकट सेटिंग्स...",
+    "ar": "إعدادات الاختصارات...",
+    "fr": "Réglages des raccourcis...",
+    "pt-BR": "Configurações de atalhos..."
+  },
+  "about": {
+    "zh-Hans": "关于 CleanLock",
+    "en": "About CleanLock",
+    "es": "Acerca de CleanLock",
+    "hi": "CleanLock के बारे में",
+    "ar": "حول CleanLock",
+    "fr": "À propos de CleanLock",
+    "pt-BR": "Sobre o CleanLock"
+  },
+  "quit": {
+    "zh-Hans": "退出",
+    "en": "Quit",
+    "es": "Salir",
+    "hi": "बाहर निकलें",
+    "ar": "إنهاء",
+    "fr": "Quitter",
+    "pt-BR": "Sair"
+  },
+  "app_tagline": {
+    "zh-Hans": "键盘清洁助手",
+    "en": "Keyboard Cleaning Assistant",
+    "es": "Asistente de limpieza de teclado",
+    "hi": "कीबोर्ड सफाई सहायक",
+    "ar": "مساعد تنظيف لوحة المفاتيح",
+    "fr": "Assistant de nettoyage clavier",
+    "pt-BR": "Assistente de limpeza de teclado"
+  },
+  "settings_title": {
+    "zh-Hans": "快捷键设置",
+    "en": "Shortcut Settings",
+    "es": "Configuración de atajos",
+    "hi": "शॉर्टकट सेटिंग्स",
+    "ar": "إعدادات الاختصارات",
+    "fr": "Réglages des raccourcis",
+    "pt-BR": "Configurações de atalhos"
+  },
+  "shortcut_label": {
+    "zh-Hans": "启动清洁模式的快捷键",
+    "en": "Shortcut to start cleaning mode",
+    "es": "Atajo para iniciar modo limpieza",
+    "hi": "सफाई मोड शुरू करने का शॉर्टकट",
+    "ar": "اختصار لبدء وضع التنظيف",
+    "fr": "Raccourci pour démarrer le mode nettoyage",
+    "pt-BR": "Atalho para iniciar modo limpeza"
+  },
+  "restore_default": {
+    "zh-Hans": "恢复默认",
+    "en": "Restore Default",
+    "es": "Restaurar predeterminado",
+    "hi": "डिफ़ॉल्ट पुनर्स्थापित करें",
+    "ar": "استعادة الافتراضي",
+    "fr": "Restaurer par défaut",
+    "pt-BR": "Restaurar padrão"
+  },
+  "cancel": {
+    "zh-Hans": "取消",
+    "en": "Cancel",
+    "es": "Cancelar",
+    "hi": "रद्द करें",
+    "ar": "إلغاء",
+    "fr": "Annuler",
+    "pt-BR": "Cancelar"
+  },
+  "save": {
+    "zh-Hans": "保存",
+    "en": "Save",
+    "es": "Guardar",
+    "hi": "सहेजें",
+    "ar": "حفظ",
+    "fr": "Enregistrer",
+    "pt-BR": "Salvar"
+  },
+  "press_shortcut": {
+    "zh-Hans": "按下快捷键...",
+    "en": "Press shortcut...",
+    "es": "Presiona un atajo...",
+    "hi": "शॉर्टकट दबाएं...",
+    "ar": "اضغط الاختصار...",
+    "fr": "Appuyez sur un raccourci...",
+    "pt-BR": "Pressione um atalho..."
+  },
+  "welcome_title": {
+    "zh-Hans": "欢迎使用 CleanLock",
+    "en": "Welcome to CleanLock",
+    "es": "Bienvenido a CleanLock",
+    "hi": "CleanLock में आपका स्वागत है",
+    "ar": "مرحباً بك في CleanLock",
+    "fr": "Bienvenue dans CleanLock",
+    "pt-BR": "Bem-vindo ao CleanLock"
+  },
+  "accessibility_description": {
+    "zh-Hans": "CleanLock 需要辅助功能权限来拦截键盘输入，防止清洁键盘时误触。",
+    "en": "CleanLock needs accessibility permission to intercept keyboard input and prevent accidental typing while cleaning.",
+    "es": "CleanLock necesita permiso de accesibilidad para interceptar la entrada del teclado y evitar escritura accidental durante la limpieza.",
+    "hi": "CleanLock को कीबोर्ड इनपुट को रोकने और सफाई के दौरान गलती से टाइपिंग को रोकने के लिए एक्सेसिबिलिटी अनुमति की आवश्यकता है।",
+    "ar": "يحتاج CleanLock إلى إذن الوصول لاعتراض إدخال لوحة المفاتيح ومنع الكتابة العرضية أثناء التنظيف.",
+    "fr": "CleanLock a besoin de l'autorisation d'accessibilité pour intercepter les entrées clavier et éviter la frappe accidentelle pendant le nettoyage.",
+    "pt-BR": "CleanLock precisa de permissão de acessibilidade para interceptar a entrada do teclado e evitar digitação acidental durante a limpeza."
+  }
+}

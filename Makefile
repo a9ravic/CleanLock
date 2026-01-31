@@ -1,6 +1,14 @@
-.PHONY: generate open clean build test
+.PHONY: generate open clean build test l10n icon
 
-generate:
+# Generate localization files from JSON source
+l10n:
+	python3 scripts/generate_locales.py
+
+# Generate app icon from SF Symbol
+icon:
+	swift scripts/generate_appicon.swift
+
+generate: l10n
 	xcodegen generate
 
 open: generate

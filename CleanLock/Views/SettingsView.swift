@@ -12,7 +12,7 @@ struct SettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            Text("快捷键设置")
+            Text(String(localized: "settings_title"))
                 .font(DesignSystem.Typography.title3)
                 .foregroundColor(DesignSystem.Colors.primaryText)
                 .padding(.top, DesignSystem.Spacing.xl)
@@ -24,7 +24,7 @@ struct SettingsView: View {
             VStack(spacing: DesignSystem.Spacing.lg) {
                 // 快捷键录制器
                 VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
-                    Text("启动清洁模式的快捷键")
+                    Text(String(localized: "shortcut_label"))
                         .font(DesignSystem.Typography.callout)
                         .foregroundColor(DesignSystem.Colors.secondaryText)
 
@@ -36,7 +36,7 @@ struct SettingsView: View {
 
                 // 恢复默认按钮
                 HStack {
-                    Button("恢复默认") {
+                    Button(String(localized: "restore_default")) {
                         withAnimation(DesignSystem.Animation.quick) {
                             editingHotKey = .default
                         }
@@ -56,7 +56,7 @@ struct SettingsView: View {
 
             // Footer buttons
             HStack {
-                Button("取消") {
+                Button(String(localized: "cancel")) {
                     onDismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -64,7 +64,7 @@ struct SettingsView: View {
 
                 Spacer()
 
-                Button("保存") {
+                Button(String(localized: "save")) {
                     saveChanges()
                 }
                 .keyboardShortcut(.defaultAction)

@@ -157,7 +157,7 @@ struct CleaningView: View {
             }
 
             // 说明文字
-            Text("擦拭键盘，按下的键会亮起")
+            Text(String(localized: "cleaning_instruction"))
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(DesignSystem.Colors.secondaryText)
 
@@ -210,7 +210,7 @@ struct CleaningView: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(DesignSystem.Colors.secondaryText)
 
-                Text("键")
+                Text(String(localized: "key_unit"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(DesignSystem.Colors.tertiaryText)
             }
@@ -262,7 +262,7 @@ struct CleaningView: View {
                 Image(systemName: "escape")
                     .font(.system(size: 11, weight: .medium))
 
-                Text("长按 ESC 3秒退出")
+                Text(String(localized: "exit_hint"))
                     .font(.system(size: 12, weight: .medium))
             }
             .foregroundColor(DesignSystem.Colors.tertiaryText)

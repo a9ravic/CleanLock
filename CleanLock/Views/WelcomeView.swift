@@ -61,7 +61,7 @@ struct WelcomeView: View {
                 .font(DesignSystem.Typography.largeTitle)
                 .foregroundColor(DesignSystem.Colors.primaryText)
 
-            Text("清洁 MacBook 键盘时锁定键盘防止误触")
+            Text(String(localized: "welcome_subtitle"))
                 .font(DesignSystem.Typography.body)
                 .foregroundColor(DesignSystem.Colors.secondaryText)
                 .multilineTextAlignment(.center)
@@ -75,22 +75,22 @@ struct WelcomeView: View {
             FeatureInfoRow(
                 icon: "sparkles",
                 iconColor: .yellow,
-                title: "可视化清洁",
-                description: "按下的键会亮起表示已清洁"
+                title: String(localized: "feature_visual_title"),
+                description: String(localized: "feature_visual_desc")
             )
 
             FeatureInfoRow(
                 icon: "checkmark.circle.fill",
                 iconColor: .green,
-                title: "自动解锁",
-                description: "全部清洁完成后自动退出"
+                title: String(localized: "feature_auto_title"),
+                description: String(localized: "feature_auto_desc")
             )
 
             FeatureInfoRow(
                 icon: "command",
                 iconColor: DesignSystem.Colors.brand,
-                title: "快捷启动",
-                description: "按下 ⌘⇧K 快速启动清洁模式"
+                title: String(localized: "feature_shortcut_title"),
+                description: String(localized: "feature_shortcut_desc")
             )
         }
         .padding(DesignSystem.Spacing.lg)
@@ -107,7 +107,7 @@ struct WelcomeView: View {
     // MARK: - Start Button
 
     private var startButton: some View {
-        BrandButton(title: "开始使用", showArrow: true, action: onDismiss)
+        BrandButton(title: String(localized: "get_started"), showArrow: true, action: onDismiss)
             .keyboardShortcut(.defaultAction)
     }
 

@@ -61,7 +61,7 @@ struct CompletionView: View {
                 Spacer()
                     .frame(height: 130)
 
-                Text("清洁完成")
+                Text(String(localized: "cleaning_complete"))
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(DesignSystem.Colors.secondaryText)
                     .opacity(showContent ? 1 : 0)

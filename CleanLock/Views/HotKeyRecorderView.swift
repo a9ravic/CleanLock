@@ -18,7 +18,7 @@ struct HotKeyRecorderView: View {
                         .fill(Color.red)
                         .frame(width: 6, height: 6)
 
-                    Text("按下快捷键...")
+                    Text(String(localized: "press_shortcut"))
                         .font(DesignSystem.Typography.callout)
                         .foregroundColor(DesignSystem.Colors.secondaryText)
                 } else {
