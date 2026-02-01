@@ -84,13 +84,13 @@ def generate_infoplist_xcstrings(output_path: Path, source_language: str, langua
     """Generate InfoPlist.xcstrings for app name localization."""
     # Copyright translations
     copyright_translations = {
-        "en": "Copyright © 2024 CleanLock. All rights reserved.",
-        "zh-Hans": "版权所有 © 2024 CleanLock。保留所有权利。",
-        "es": "Copyright © 2024 CleanLock. Todos los derechos reservados.",
-        "hi": "कॉपीराइट © 2024 CleanLock। सर्वाधिकार सुरक्षित।",
-        "ar": "حقوق الطبع والنشر © 2024 CleanLock. جميع الحقوق محفوظة.",
-        "fr": "Copyright © 2024 CleanLock. Tous droits réservés.",
-        "pt-BR": "Copyright © 2024 CleanLock. Todos os direitos reservados."
+        "en": "Copyright © 2026 CleanLock. All rights reserved.",
+        "zh-Hans": "版权所有 © 2026 CleanLock。保留所有权利。",
+        "es": "Copyright © 2026 CleanLock. Todos los derechos reservados.",
+        "hi": "कॉपीराइट © 2026 CleanLock। सर्वाधिकार सुरक्षित।",
+        "ar": "حقوق الطبع والنشر © 2026 CleanLock. جميع الحقوق محفوظة.",
+        "fr": "Copyright © 2026 CleanLock. Tous droits réservés.",
+        "pt-BR": "Copyright © 2026 CleanLock. Todos os direitos reservados."
     }
 
     # Build localizations for each string

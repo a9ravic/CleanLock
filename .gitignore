@@ -33,3 +33,6 @@ Package.resolved
 # App Store metadata and website (managed separately)
 appstore/
 website/
+
+# Claude Code local settings
+.claude/settings.local.json
