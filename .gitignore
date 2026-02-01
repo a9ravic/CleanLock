@@ -29,3 +29,7 @@ Package.resolved
 
 # Archives
 *.xcarchive
+
+# App Store metadata and website (managed separately)
+appstore/
+website/
