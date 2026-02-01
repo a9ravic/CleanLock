@@ -5,6 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
+# Generate localization files from JSON source
+make l10n
+
+# Generate app icon from SF Symbol
+make icon
+
 # Generate Xcode project (uses XcodeGen)
 make generate
 
@@ -33,6 +39,17 @@ xcodebuild -project CleanLock.xcodeproj -scheme CleanLockTests -only-testing:Cle
 xcodebuild -project CleanLock.xcodeproj -scheme CleanLockTests -only-testing:CleanLockTests/CleaningStateTests/testMarkKeyCleaned test
 ```
 
+## First-Time Setup
+
+```bash
+# 1. Configure code signing
+cp local.xcconfig.template local.xcconfig
+# Edit local.xcconfig, fill in your DEVELOPMENT_TEAM
+
+# 2. Generate and build
+make build
+```
+
 ## Architecture Overview
 
 CleanLock is a macOS keyboard cleaning utility that locks keyboard input during cleaning and provides visual feedback for pressed keys.
@@ -49,8 +66,9 @@ The app uses **AppKit for window management** and **SwiftUI for views**:
 
 | Service | Purpose |
 |---------|---------|
-| `SandboxKeyInterceptor` | NSEvent.addLocalMonitorForEvents for keyboard event interception. App Sandbox compatible. Handles keyDown, keyUp, flagsChanged |
-| `HotKeyManager` | Global hotkey registration via NSEvent.addGlobalMonitorForEvents |
+| `KeyInterceptor` | Hybrid keyboard interception: CGEvent Tap (with accessibility permission) or NSEvent Local Monitor (sandbox fallback) |
+| `HotKeyManager` | Global hotkey registration via Carbon API (RegisterEventHotKey) |
+| `SystemStateManager` | Saves/restores system state (volume, brightness) during cleaning sessions |
 
 ### State Management
 
@@ -67,7 +85,7 @@ Cleaned keys are tracked separately in `cleanedKeys: Set<UInt16>` to optimize Sw
 User triggers cleaning (hotkey/button)
     → AppDelegate.startCleaning()
     → showCleaningWindow()
-    → SandboxKeyInterceptor.start()
+    → KeyInterceptor.start()
     → onKeyPress callback → stateManager.markKeyCleaned(keyCode)
     → CleaningView updates → KeyboardView highlights key
 ```
@@ -91,7 +109,7 @@ User triggers cleaning (hotkey/button)
 ## Important Implementation Details
 
 - **App Sandbox enabled** (`CleanLock.entitlements`) - App Store compatible
-- **No special permissions required** - Uses NSEvent local monitor instead of CGEvent Tap
+- **Optional accessibility permission** - Enhances interception (CGEvent Tap for all keys); works without (Local Monitor fallback)
 - **Window level `.screenSaver`** - Cleaning window appears above all content
 - **Automatic focus recovery** - Window regains focus if user clicks outside
 - **73 cleanable keys** - Total minus 5 placeholder keys (F3-F6 + TouchID)
@@ -101,3 +119,9 @@ User triggers cleaning (hotkey/button)
 - macOS 13.0+
 - Swift 5.9
 - Xcode 15.0+
+
+## Gotchas
+
+- **Keyboard interception modes**: With accessibility permission uses CGEvent Tap (intercepts all keys including F3-F6); without permission falls back to Local Monitor (F1-F12 auto-skipped)
+- **Git identity**: This repo uses separate git identity (`agravic`), configured in local `.git/config`
+- **Website deployment**: `website/` is gitignored; deploy with `./website/deploy.sh`
