@@ -12,11 +12,17 @@ Lock your keyboard and clean every key with confidence
 
 English | [简体中文](README.md)
 
-<img src="website/icon.png" width="128" height="128" alt="CleanLock Icon">
+<img src="assets/icon.png" width="128" height="128" alt="CleanLock Icon">
 
 </div>
 
 ---
+
+## Screenshot
+
+<div align="center">
+<img src="assets/screenshot-cleaning.png" width="600" alt="Cleaning Mode">
+</div>
 
 ## Features
 

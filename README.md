@@ -12,11 +12,17 @@
 
 [English](README_EN.md) | 简体中文
 
-<img src="website/icon.png" width="128" height="128" alt="CleanLock Icon">
+<img src="assets/icon.png" width="128" height="128" alt="CleanLock Icon">
 
 </div>
 
 ---
+
+## 截图
+
+<div align="center">
+<img src="assets/screenshot-cleaning.png" width="600" alt="清洁模式">
+</div>
 
 ## 功能特性
 
